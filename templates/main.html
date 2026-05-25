@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Cadastro</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/cadastro.css') }}">
+</head>
+
+<body>
+
+    <div class="form">
+
+        <h1>Formulário de Cadastro</h1>
+
+        <form class="form" action="/gravar" method="POST">
+
+            <div class="form_grupo">
+                <label>Nome do cliente</label>
+                <input type="text" name="nome" class="form_input" placeholder="Nome da cliente" required>
+            </div>
+
+            <div class="form_grupo">
+                <label>Nome do Responsável</label>
+                <input type="text" name="contato" class="form_input" placeholder="Nome do Responsável" required>
+            </div>
+
+            <div class="form_grupo">
+                <label>Número de peças</label>
+                <input type="number" name="pecas" class="form_input" required>
+            </div>
+            <div class="form_grupo">
+                <label>Valor Unitário</label>
+                <input type="number" name="valorUni" class="form_input" placeholder="Valor da Unidade" required>
+            </div>
+
+            <div class="form_grupo">
+                <label>Produto</label>
+                <select name="produto" class="form_input">
+                    <option value="Selecione">Selecione</option>
+                    <option value="copo inox">Copo Inox</option>
+                    <option value="caneca">Caneca Cerâmica</option>
+                    <option value="chaveiro">Chaveiro</option>
+                </select>
+            </div>
+
+            <div class="form_grupo">
+                <label>Canal</label>
+                <select name="canal" class="form_input">
+                    <option value="Selecione">Selecione</option>
+                    <option value="instagran">Instagram</option>
+                    <option value="facebook">Facebook</option>
+                    <option value="pessoal">Pessoal</option>
+                    <option value="Mercado Livre">Mercado Livre</option>
+                    <option value="whatsApp">WhastsApp</option>
+                    <option value="shopee">Shopee</option>
+                </select>
+
+            </div>
+            <div class="form_grupo">
+                <label>Conta</label>
+                <select name="conta" class="form_input">
+                    <option value="Selecione">Selecione</option>
+                    <option value="renyer">Renyer</option>
+                    <option value="leo">Leonardo</option>
+
+                </select>
+
+            </div>
+
+
+            <input type="hidden" name="acao" value="enviar">
+
+            <button type="submit" class="submit_btn">
+                Cadastrar
+            </button>
+
+        </form>
+
+    </div>
+
+</body>
+
+</html>
