@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template, redirect, url_for
+from flask import Flask, request, render, redirect, url_for
 from datetime import datetime
 from openpyxl import Workbook, load_workbook
 import os
@@ -7,7 +7,7 @@ app = Flask(__name__)
 
 @app.route("/")
 def home():
-    return render_template("index.html")
+    return render("index.html")
 
 
 # Função para cálculo
