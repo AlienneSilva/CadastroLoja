@@ -1,17 +1,35 @@
 from flask import Flask, request, render_template, redirect, url_for
 from datetime import datetime
-from openpyxl import Workbook, load_workbook
-import os
+import gspread
+from google.oauth2.service_account import Credentials
 
 app = Flask(__name__)
 
-@app.route("/")
-def home():
-    return render_template("index.html")
+# Permissões
+escopos = [
+    "https://www.googleapis.com/auth/spreadsheets",
+    "https://www.googleapis.com/auth/drive"
+]
+
+credenciais = Credentials.from_service_account_file(
+    "credenciais.json",
+    scopes=escopos
+)
+
+cliente = gspread.authorize(credenciais)
+
+# Nome da planilha
+planilha = cliente.open("Cadastros")
+aba = planilha.sheet1
 
 
 def calc(valorUni, pecas):
     return float(valorUni) * int(pecas)
+
+
+@app.route("/")
+def home():
+    return render_template("index.html")
 
 
 @app.route("/gravar", methods=["POST"])
@@ -29,31 +47,7 @@ def gravar():
 
     data_registro = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
 
-    arquivo_excel = "cadastros.xlsx"
-
-    if not os.path.exists(arquivo_excel):
-
-        workbook = Workbook()
-        planilha = workbook.active
-        planilha.title = "Cadastros"
-
-        planilha.append([
-            "Nome",
-            "Responsável",
-            "Peças",
-            "Produto",
-            "Valor Unitário",
-            "Canal",
-            "Conta",
-            "Valor Total",
-            "Data Registro"
-        ])
-
-    else:
-        workbook = load_workbook(arquivo_excel)
-        planilha = workbook.active
-
-    planilha.append([
+    aba.append_row([
         nome,
         contato,
         pecas,
@@ -65,10 +59,8 @@ def gravar():
         data_registro
     ])
 
-    workbook.save(arquivo_excel)
-
-    return redirect(url_for('home'))
+    return redirect(url_for("home"))
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0")
+    app.run(host="0.0.0.0", debug=True)
