@@ -17,12 +17,12 @@ escopos = [
 ]
 
 credenciais_json = json.loads(
-    os.environ["GOOGLE_CREDENTIALS"]
+   os.environ["GOOGLE_CREDENTIALS"]
 )
 
 credenciais = Credentials.from_service_account_info(
-    credenciais_json,
-    scopes=escopos
+   credenciais_json,
+  scopes=escopos
 )
 
 cliente = gspread.authorize(credenciais)
@@ -32,8 +32,8 @@ cliente = gspread.authorize(credenciais)
 # =====================
 
 try:
-    planilha_vendas = cliente.open("Cadastros")
-    aba_vendas = planilha_vendas.sheet1
+   planilha_vendas = cliente.open("Cadastros")
+   aba_vendas = planilha_vendas.sheet1
 
 except Exception as erro:
     print("Erro ao abrir planilha Cadastros:")
@@ -52,15 +52,15 @@ cabecalho_vendas = [
 ]
 
 if aba_vendas.row_values(1) != cabecalho_vendas:
-    aba_vendas.insert_row(cabecalho_vendas, 1)
+   aba_vendas.insert_row(cabecalho_vendas, 1)
 
 # ======================
-# PLANILHA ESTOQUE
+ #PLANILHA ESTOQUE
 # =====================
 
 try:
-    planilha_estoque = cliente.open("Estoque")
-    aba_estoque = planilha_estoque.sheet1
+   planilha_estoque = cliente.open("Estoque")
+   aba_estoque = planilha_estoque.sheet1
 
 except Exception as erro:
     print("Erro ao abrir planilha Estoque:")
@@ -70,6 +70,7 @@ cabecalho_estoque = [
     "Responsável",
     "Quantidade",
     "Itens",
+    "Valor Pago",
     "Data Registro"
 ]
 
@@ -95,6 +96,34 @@ def cadastro():
 def estoque():
     return render_template("estoque.html")
 
+@app.route("/dashboard")
+def dashboard():
+
+    # Pega dados das planilhas
+    vendas = aba_vendas.get_all_records()
+    estoque = aba_estoque.get_all_records()
+
+    receita = 0
+    custo = 0
+
+    # Soma receita das vendas
+    for venda in vendas:
+
+        receita += float(venda["Valor Total"])
+
+    # Soma custo do estoque
+    for item in estoque:
+
+        custo += float(item["Valor Pago"])
+
+    lucro = receita - custo
+
+    return render_template(
+        "dashboard.html",
+        receita=round(receita, 2),
+        custo=round(custo, 2),
+        lucro=round(lucro, 2)
+    )
 
 # =====================
 # FUNÇÕES
@@ -148,6 +177,7 @@ def gravar_estoque():
     responsa = request.form["responsa"]
     qtd = request.form["qtd"]
     itens = request.form["itens"]
+    valorPago = request.form["valorPago"]
 
     data_registro = datetime.now().strftime("%d/%m/%Y")
 
@@ -155,6 +185,7 @@ def gravar_estoque():
         responsa,
         qtd,
         itens,
+        valorPago,
         data_registro
     ])
 

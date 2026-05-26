@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard Financeiro</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/cadastro.css') }}">
+</head>
+
+<body>
+
+
+    <h1>Dashboard Financeiro</h1>
+
+    <p>Receita Total: R$ {{ receita }}</p>
+
+    <p>Custo Total: R$ {{ custo }}</p>
+
+    <p>Lucro Total: R$ {{ lucro }}</p>
+
+    <a href="{{ url_for('inicio') }}">
+        <button>Voltar</button>
+    </a>
+
+</body>
+
+</html>
