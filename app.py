@@ -7,37 +7,34 @@ import json
 
 app = Flask(__name__)
 
-# Página inicial
-@app.route("/")
-def inicio():
-    return render_template("home.html")
+# =====================
+# Conexão Google Sheets
+# =====================
 
-# Página cadastro
-@app.route("/cadastro")
-def cadastro():
-    return render_template("index.html")
-
-# Codigo de conexão com google sheets
 escopos = [
     "https://www.googleapis.com/auth/spreadsheets",
     "https://www.googleapis.com/auth/drive"
 ]
 
 credenciais_json = json.loads(
-   os.environ["GOOGLE_CREDENTIALS"]
+    os.environ["GOOGLE_CREDENTIALS"]
 )
 
 credenciais = Credentials.from_service_account_info(
-   credenciais_json,
- scopes=escopos
+    credenciais_json,
+    scopes=escopos
 )
 
 cliente = gspread.authorize(credenciais)
-#criar o cabeçalho da planilha
-planilha = cliente.open("Cadastros")
-aba = planilha.sheet1
 
-cabecalho = [
+# =====================
+# PLANILHA VENDAS
+# =====================
+
+planilha_vendas = cliente.open("Cadastros")
+aba_vendas = planilha_vendas.sheet1
+
+cabecalho_vendas = [
     "Nome",
     "Responsável",
     "Peças",
@@ -49,22 +46,60 @@ cabecalho = [
     "Data Registro"
 ]
 
-primeira_linha = aba.row_values(1)
+if aba_vendas.row_values(1) != cabecalho_vendas:
+    aba_vendas.insert_row(cabecalho_vendas, 1)
 
-if primeira_linha != cabecalho:
-    aba.insert_row(cabecalho, 1)
-#calcula o valor total da venda
+# =====================
+# PLANILHA ESTOQUE
+# =====================
+
+planilha_estoque = cliente.open("Estoque")
+aba_estoque = planilha_estoque.sheet1
+
+cabecalho_estoque = [
+    "Responsável",
+    "Quantidade",
+    "Itens",
+    "Data Registro"
+]
+
+if aba_estoque.row_values(1) != cabecalho_estoque:
+    aba_estoque.insert_row(cabecalho_estoque, 1)
+
+
+# =====================
+# ROTAS
+# =====================
+
+@app.route("/")
+def inicio():
+    return render_template("home.html")
+
+
+@app.route("/cadastro")
+def cadastro():
+    return render_template("index.html")
+
+
+@app.route("/estoque")
+def estoque():
+    return render_template("estoque.html")
+
+
+# =====================
+# FUNÇÕES
+# =====================
+
 def calc(valorUni, pecas):
     return float(valorUni) * int(pecas)
 
 
-@app.route("/")
-def home():
-    return render_template("index.html")
+# =====================
+# SALVAR VENDAS
+# =====================
 
-
-@app.route("/gravar", methods=["POST"])
-def gravar():
+@app.route("/gravar_venda", methods=["POST"])
+def gravar_venda():
 
     nome = request.form["nome"]
     contato = request.form["contato"]
@@ -75,9 +110,10 @@ def gravar():
     conta = request.form["conta"]
 
     valorTotal = calc(valorUni, pecas)
+
     data_registro = datetime.now().strftime("%d/%m/%Y %H:%M")
 
-    aba.append_row([
+    aba_vendas.append_row([
         nome,
         contato,
         pecas,
@@ -89,8 +125,30 @@ def gravar():
         data_registro
     ])
 
-
     return redirect(url_for("cadastro"))
+
+
+# =====================
+# SALVAR ESTOQUE
+# =====================
+
+@app.route("/gravar_estoque", methods=["POST"])
+def gravar_estoque():
+
+    responsa = request.form["responsa"]
+    qtd = request.form["qtd"]
+    itens = request.form["itens"]
+
+    data_registro = datetime.now().strftime("%d/%m/%Y")
+
+    aba_estoque.append_row([
+        responsa,
+        qtd,
+        itens,
+        data_registro
+    ])
+
+    return redirect(url_for("estoque"))
 
 
 if __name__ == "__main__":

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Estoque</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/cadastro.css') }}">
+</head>
+
+<body>
+
+    <div class="form">
+
+        <h1>Formulário de Cadastro de estoque</h1>
+
+        <form action="/gravar_estoque" method="POST">
+
+            <div class="form_grupo">
+                <label>Nome do Responsável</label>
+                <input type="text" name="responsa" class="form_input" placeholder="Nome do Responsável" required>
+            </div>
+
+            <div class="form_grupo">
+                <label>Número de peças</label>
+                <input type="number" name="qtd" class="form_input" placeholder="Número de peças compradas" required>
+            </div>
+            <div class="form_grupo">
+                <label>Produto</label>
+                <select name="itens" class="form_input">
+                    <option value="Selecione">Selecione</option>
+                    <option value="copo inox">Copo Inox</option>
+                    <option value="caneca">Caneca Cerâmica</option>
+                    <option value="MDF">MDF</option>
+                    <option value="argola">Argola</option>
+                </select>
+            </div>
+
+            <input type="hidden" name="acao" value="enviar">
+
+            <button type="submit" class="submit_btn">
+                Cadastrar
+            </button>
+            <a href="{{ url_for('home') }}">
+                <button type="button">Voltar</button>
+            </a>
+
+        </form>
+
+    </div>
+
+</body>
+
+</html>

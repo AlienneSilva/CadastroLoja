@@ -16,7 +16,7 @@
 
         <h1>Formulário de Cadastro</h1>
 
-        <form class="form" action="/gravar" method="POST">
+        <form action="/gravar_venda" method="POST">
 
             <div class="form_grupo">
                 <label>Nome do cliente</label>
@@ -53,7 +53,7 @@
                     <option value="Selecione">Selecione</option>
                     <option value="instagran">Instagram</option>
                     <option value="facebook">Facebook</option>
-                    <option value="vendas pessoais">vendas pessoais</option>
+                    <option value="vendas pessoais">Vendas Pessoais</option>
                     <option value="Mercado Livre">Mercado Livre</option>
                     <option value="whatsApp">WhastsApp</option>
                     <option value="shopee">Shopee</option>
@@ -67,7 +67,7 @@
                     <option value="Ra Mercado Livre">Ra produtos mercado livre</option>
                     <option value="Ra produtos shoppe">Ra produtos shoppe</option>
                     <option value="Unistory shoppe">Unistory shoppe</option>
-                    <option value="flayserlaser shoppe">flayserlaser shoppe</option>
+                    <option value="flayserlaser shoppe">Flayserlaser Shoppe</option>
                     <option value="Léo mercado livre">Léo mercado livre</option>
                 </select>
 
@@ -79,6 +79,7 @@
             <button type="submit" class="submit_btn">
                 Cadastrar
             </button>
+            </br>
             <a href="{{ url_for('home') }}">
                 <button type="button">Voltar</button>
             </a>
