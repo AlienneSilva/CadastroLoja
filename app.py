@@ -2,6 +2,8 @@ from flask import Flask, request, render_template, redirect, url_for
 from datetime import datetime
 from google.oauth2.service_account import Credentials
 import gspread
+import os
+import json
 
 app = Flask(__name__)
 
@@ -12,8 +14,14 @@ escopos = [
     "https://www.googleapis.com/auth/drive"
 ]
 
-credenciais = Credentials.from_service_account_file(
-    "cadastro-497420-0dfc8c86c2dc.json", 
+
+
+credenciais_json = json.loads(
+    os.environ["GOOGLE_CREDENTIALS"]
+)
+
+credenciais = Credentials.from_service_account_info(
+    credenciais_json,
     scopes=escopos
 )
 
