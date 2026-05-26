@@ -27,25 +27,25 @@ credenciais = Credentials.from_service_account_info(
 
 cliente = gspread.authorize(credenciais)
 
-# Nome da planilha
 planilha = cliente.open("Cadastros")
 aba = planilha.sheet1
-# Cria cabeçalho automaticamente se a planilha estiver vazia
-if not aba.get_all_values():
 
-    cabecalho = [
-        "Nome",
-        "Responsável",
-        "Peças",
-        "Produto",
-        "Valor Unitário",
-        "Canal",
-        "Conta",
-        "Valor Total",
-        "Data Registro"
-    ]
+cabecalho = [
+    "Nome",
+    "Responsável",
+    "Peças",
+    "Produto",
+    "Valor Unitário",
+    "Canal",
+    "Conta",
+    "Valor Total",
+    "Data Registro"
+]
 
-    aba.append_row(cabecalho)
+primeira_linha = aba.row_values(1)
+
+if primeira_linha != cabecalho:
+    aba.insert_row(cabecalho, 1)
 
 def calc(valorUni, pecas):
     return float(valorUni) * int(pecas)
