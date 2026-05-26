@@ -31,8 +31,13 @@ cliente = gspread.authorize(credenciais)
 # PLANILHA VENDAS
 # =====================
 
-planilha_vendas = cliente.open("Cadastros")
-aba_vendas = planilha_vendas.sheet1
+try:
+    planilha_vendas = cliente.open("Cadastros")
+    aba_vendas = planilha_vendas.sheet1
+
+except Exception as erro:
+    print("Erro ao abrir planilha Cadastros:")
+    print(erro)
 
 cabecalho_vendas = [
     "Nome",
@@ -53,8 +58,13 @@ if aba_vendas.row_values(1) != cabecalho_vendas:
 # PLANILHA ESTOQUE
 # =====================
 
-planilha_estoque = cliente.open("Estoque")
-aba_estoque = planilha_estoque.sheet1
+try:
+    planilha_estoque = cliente.open("Estoque")
+    aba_estoque = planilha_estoque.sheet1
+
+except Exception as erro:
+    print("Erro ao abrir planilha Estoque:")
+    print(erro)
 
 cabecalho_estoque = [
     "Responsável",
