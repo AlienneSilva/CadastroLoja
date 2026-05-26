@@ -49,7 +49,7 @@ cabecalho_vendas = [
 if aba_vendas.row_values(1) != cabecalho_vendas:
     aba_vendas.insert_row(cabecalho_vendas, 1)
 
-# =====================
+# ======================
 # PLANILHA ESTOQUE
 # =====================
 
