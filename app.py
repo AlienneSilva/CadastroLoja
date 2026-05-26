@@ -1,18 +1,19 @@
 from flask import Flask, request, render_template, redirect, url_for
 from datetime import datetime
-import gspread
 from google.oauth2.service_account import Credentials
+import gspread
 
 app = Flask(__name__)
 
-# Permissões
+
+
 escopos = [
     "https://www.googleapis.com/auth/spreadsheets",
     "https://www.googleapis.com/auth/drive"
 ]
 
 credenciais = Credentials.from_service_account_file(
-    "credenciais.json",
+    "cadastro-497420-0dfc8c86c2dc.json", 
     scopes=escopos
 )
 
@@ -21,7 +22,6 @@ cliente = gspread.authorize(credenciais)
 # Nome da planilha
 planilha = cliente.open("Cadastros")
 aba = planilha.sheet1
-
 
 def calc(valorUni, pecas):
     return float(valorUni) * int(pecas)
@@ -44,7 +44,6 @@ def gravar():
     conta = request.form["conta"]
 
     valorTotal = calc(valorUni, pecas)
-
     data_registro = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
 
     aba.append_row([
