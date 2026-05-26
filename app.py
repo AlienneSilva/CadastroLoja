@@ -30,6 +30,22 @@ cliente = gspread.authorize(credenciais)
 # Nome da planilha
 planilha = cliente.open("Cadastros")
 aba = planilha.sheet1
+# Cria cabeçalho automaticamente se a planilha estiver vazia
+if not aba.get_all_values():
+
+    cabecalho = [
+        "Nome",
+        "Responsável",
+        "Peças",
+        "Produto",
+        "Valor Unitário",
+        "Canal",
+        "Conta",
+        "Valor Total",
+        "Data Registro"
+    ]
+
+    aba.append_row(cabecalho)
 
 def calc(valorUni, pecas):
     return float(valorUni) * int(pecas)
@@ -52,7 +68,7 @@ def gravar():
     conta = request.form["conta"]
 
     valorTotal = calc(valorUni, pecas)
-    data_registro = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+    data_registro = datetime.now().strftime("%d/%m/%Y %H:%M")
 
     aba.append_row([
         nome,
