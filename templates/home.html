@@ -11,24 +11,25 @@
 
 <body>
 
-    <h1>Sistema de Controle de Vendas</h1>
+    <h1 class="title1">Sistema de Controle de Vendas</h1>
 
     <a href="{{ url_for('cadastro') }}">
         <button>Ir para Cadastro</button>
     </a>
-    </br>
+
     <a href="{{ url_for('estoque') }}">
         <button>Ir para Estoque</button>
     </a>
-    </br>
+    
+            <a href="{{ url_for('dashboard') }}">
+    
+        <button type="button">Dashboard Financeiro</button>
+    </a>
     <a href="{{ url_for('inicio') }}">
     
         <button type="button">Voltar</button>
     </a>
-        <a href="{{ url_for('dashboard') }}">
-    
-        <button type="button">Dashboard</button>
-    </a>
+
 
 </body>
 

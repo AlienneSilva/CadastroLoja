@@ -26,6 +26,7 @@
     width: 100%;
     padding: 10px;
     border: none;
+    transition: 0.3s;
     border-radius: 5px;
 }
 
@@ -38,16 +39,21 @@ textarea:focus select:focus {
 
 /* Botão de envio */
 button {
-    width: 100%;
-    padding: 10px;
+    padding: 12px;
     background: purple;
-    color: white;
-    border: none;
-    border-radius: 5px;
+    color: white; 
     font-size: 18px;
     cursor: pointer;
     transition: 0.3s;
-    align-items: center;
+    align-items: center;  
+    display:block;
+    width:180px;
+    margin-top:40px;
+    margin-left:auto;
+    margin-right:auto;
+    border:none;
+    border-radius:10px;
+
 }
 
 button:hover {

@@ -7,19 +7,31 @@
     <title>Dashboard Financeiro</title>
 
     <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/cadastro.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
 </head>
 
 <body>
 
 
-    <h1>Dashboard Financeiro</h1>
+    <h1 class="title1">Dashboard Financeiro</h1>
 
     <p>Receita Total: R$ {{ receita }}</p>
 
     <p>Custo Total: R$ {{ custo }}</p>
 
     <p>Lucro Total: R$ {{ lucro }}</p>
+
+    <h2>Estoque Atual</h2>
+
+    <ul>
+        {% for produto, quantidade in estoque.items() %}
+
+        <li>
+            {{ produto }} : {{ quantidade }} restantes
+        </li>
+
+        {% endfor %}
+    </ul>
 
     <a href="{{ url_for('inicio') }}">
         <button>Voltar</button>

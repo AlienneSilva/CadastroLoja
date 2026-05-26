@@ -31,27 +31,26 @@
                 <label>Produto</label>
                 <select name="itens" class="form_input">
                     <option value="Selecione">Selecione</option>
-                    <option value="copo inox">Copo Inox</option>
-                    <option value="caneca">Caneca Cerâmica</option>
+                    <option value="Copo Inox">Copo Inox</option>
+                    <option value="Caneca">Caneca Cerâmica</option>
                     <option value="MDF">MDF</option>
-                    <option value="argola">Argola</option>
+                    <option value="Argola">Argola</option>
                 </select>
             </div>
-            <div>
-                <label>Valor pago</label>
+            <div class="form_grupo">
+                <label>Valor Pago</label>
                 <input type="number" name="valorPago" class="form_input" placeholder="Valor Pago" required>
             </div>
 
-            <div>
             <input type="hidden" name="acao" value="enviar">
             <button type="submit" class="submit_btn">
                 Cadastrar
             </button>
-            </div>
-            <div>
+
+
             <a href="{{ url_for('inicio') }}">
                 <button type="button">Voltar</button>
-            </a></div>
+            </a>
 
         </form>
 

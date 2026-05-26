@@ -16,16 +16,28 @@ escopos = [
     "https://www.googleapis.com/auth/drive"
 ]
 
-credenciais_json = json.loads(
-   os.environ["GOOGLE_CREDENTIALS"]
-)
 
-credenciais = Credentials.from_service_account_info(
-   credenciais_json,
-  scopes=escopos
-)
+# Render
+if "GOOGLE_CREDENTIALS" in os.environ:
 
+    credenciais_json = json.loads(
+        os.environ["GOOGLE_CREDENTIALS"]
+    )
+
+    credenciais = Credentials.from_service_account_info(
+        credenciais_json,
+        scopes=escopos
+    )
+
+# Local
+else:
+
+  credenciais = Credentials.from_service_account_file(
+    "cadastro-497420-0dfc8c86c2dc.json",
+    scopes=escopos
+)
 cliente = gspread.authorize(credenciais)
+
 
 # =====================
 # PLANILHA VENDAS
@@ -96,34 +108,88 @@ def cadastro():
 def estoque():
     return render_template("estoque.html")
 
+
 @app.route("/dashboard")
 def dashboard():
 
-    # Pega dados das planilhas
     vendas = aba_vendas.get_all_records()
     estoque = aba_estoque.get_all_records()
 
     receita = 0
-    custo = 0
+    custo_total_vendido = 0
 
-    # Soma receita das vendas
-    for venda in vendas:
+    produtos_estoque = {}
+    produtos_vendidos = {}
 
-        receita += float(venda["Valor Total"])
-
-    # Soma custo do estoque
+    # Lê estoque
     for item in estoque:
 
-        custo += float(item["Valor Pago"])
+        try:
+            produto = item["Itens"]
+            quantidade = int(item["Quantidade"])
+            valor_pago = float(item["Valor Pago"])
 
-    lucro = receita - custo
+            # Guarda quantidade e custo unitário
+            produtos_estoque[produto] = {
+                "quantidade": quantidade,
+                "custo": valor_pago
+            }
+
+        except:
+            continue
+
+    # Lê vendas
+    for venda in vendas:
+
+        try:
+            produto = venda["Produto"]
+            qtd_vendida = int(venda["Peças"])
+            valor_total = float(venda["Valor Total"])
+
+            receita += valor_total
+
+            produtos_vendidos[produto] = (
+                produtos_vendidos.get(produto, 0)
+                + qtd_vendida
+            )
+
+            # custo somente dos itens vendidos
+            if produto in produtos_estoque:
+
+                custo_unitario = produtos_estoque[produto]["custo"]
+
+                custo_total_vendido += (
+                    qtd_vendida * custo_unitario
+                )
+
+        except:
+            continue
+
+
+    # Calcula estoque restante
+    estoque_atual = {}
+
+    for produto in produtos_estoque:
+
+        comprado = produtos_estoque[produto]["quantidade"]
+
+        vendido = produtos_vendidos.get(produto, 0)
+
+        estoque_atual[produto] = comprado - vendido
+
+
+    lucro = receita - custo_total_vendido
 
     return render_template(
-        "dashboard.html",
-        receita=round(receita, 2),
-        custo=round(custo, 2),
-        lucro=round(lucro, 2)
-    )
+    "dashboard.html",
+    receita=round(receita,2),
+    custo=round(custo_total_vendido,2),
+    lucro=round(lucro,2),
+    estoque=estoque_atual,
+
+    produtos=list(estoque_atual.keys()),
+    quantidades=list(estoque_atual.values())
+)
 
 # =====================
 # FUNÇÕES

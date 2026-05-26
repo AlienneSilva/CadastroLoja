@@ -12,7 +12,9 @@ body{
     align-items: center;
     display: flex;
     flex-direction: column;
-    background-color: #fff;
-    
+    background-color: #fff;    
 
+}
+.title1{
+    text-align: center;
 }
