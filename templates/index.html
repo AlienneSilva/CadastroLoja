@@ -30,7 +30,7 @@
 
             <div class="form_grupo">
                 <label>Número de peças</label>
-                <input type="number" name="pecas" class="form_input" placeholder="Número de peças vendidas"required>
+                <input type="number" name="pecas" class="form_input" placeholder="Número de peças vendidas" required>
             </div>
             <div class="form_grupo">
                 <label>Valor Unitário</label>
@@ -79,6 +79,9 @@
             <button type="submit" class="submit_btn">
                 Cadastrar
             </button>
+            <a href="{{ url_for('home') }}">
+                <button type="button">Voltar</button>
+            </a>
 
         </form>
 

@@ -7,26 +7,33 @@ import json
 
 app = Flask(__name__)
 
+# Página inicial
+@app.route("/")
+def inicio():
+    return render_template("home.html")
 
+# Página cadastro
+@app.route("/cadastro")
+def cadastro():
+    return render_template("index.html")
 
+# Codigo de conexão com google sheets
 escopos = [
     "https://www.googleapis.com/auth/spreadsheets",
     "https://www.googleapis.com/auth/drive"
 ]
 
-
-
 credenciais_json = json.loads(
-    os.environ["GOOGLE_CREDENTIALS"]
+   os.environ["GOOGLE_CREDENTIALS"]
 )
 
 credenciais = Credentials.from_service_account_info(
-    credenciais_json,
-    scopes=escopos
+   credenciais_json,
+ scopes=escopos
 )
 
 cliente = gspread.authorize(credenciais)
-
+#criar o cabeçalho da planilha
 planilha = cliente.open("Cadastros")
 aba = planilha.sheet1
 
@@ -46,7 +53,7 @@ primeira_linha = aba.row_values(1)
 
 if primeira_linha != cabecalho:
     aba.insert_row(cabecalho, 1)
-
+#calcula o valor total da venda
 def calc(valorUni, pecas):
     return float(valorUni) * int(pecas)
 
@@ -82,7 +89,8 @@ def gravar():
         data_registro
     ])
 
-    return redirect(url_for("home"))
+
+    return redirect(url_for("cadastro"))
 
 
 if __name__ == "__main__":

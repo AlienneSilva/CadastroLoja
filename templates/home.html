@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<head>
+    <meta charset="UTF-8">
+       <title>Início</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/cadastro.css') }}">
+</head>
+
+<body>
+
+    <h1>Sistema de Controle de Vendas</h1>
+
+    <a href="{{ url_for('cadastro') }}">
+        <button>Ir para Cadastro</button>
+    </a>
+    </a>
+    <a href="{{ url_for('home') }}">
+        <button type="button">Voltar</button>
+    </a>
+
+</body>
+
+</html>
