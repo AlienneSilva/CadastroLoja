@@ -2,9 +2,10 @@
 <html lang="pt-BR">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+
 <head>
     <meta charset="UTF-8">
-    <title>Dashboard Financeiro</title>
+    <title>Financeiro</title>
 
     <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
@@ -13,13 +14,28 @@
 <body>
 
 
-    <h1 class="title1">Dashboard Financeiro</h1>
+    <h1>Financeiro</h1>
 
-    <p>Receita Total: R$ {{ receita }}</p>
 
-    <p>Custo Total: R$ {{ custo }}</p>
 
-    <p>Lucro Total: R$ {{ lucro }}</p>
+    <div class="dados">
+
+        <div class="item">
+            <label>Receita:</label>
+            <p>R$ {{ receita }}</p>
+        </div>
+
+        <div class="item">
+            <label>Custo:</label>
+            <p>R$ {{ custo }}</p>
+        </div>
+
+        <div class="item">
+            <label>Lucro:</label>
+            <p>R$ {{ lucro }}</p>
+        </div>
+
+    </div>
 
     <h2>Estoque Atual</h2>
 
@@ -32,10 +48,12 @@
 
         {% endfor %}
     </ul>
+    <div class="botoes">
 
-    <a href="{{ url_for('inicio') }}">
-        <button>Voltar</button>
-    </a>
+        <a href="{{ url_for('inicio') }}">
+            <button class="action">Voltar</button>
+        </a>
+    </div>
 
 </body>
 

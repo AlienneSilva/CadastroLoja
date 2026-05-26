@@ -2,12 +2,13 @@
 <html lang="pt-BR">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+
 <head>
     <meta charset="UTF-8">
     <title>Estoque</title>
 
     <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/cadastro.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/estoque.css') }}">
 </head>
 
 <body>
@@ -42,16 +43,17 @@
                 <input type="number" name="valorPago" class="form_input" placeholder="Valor Pago" required>
             </div>
 
+        <div class="botoes">
+
             <input type="hidden" name="acao" value="enviar">
             <button type="submit" class="submit_btn">
                 Cadastrar
             </button>
 
-
             <a href="{{ url_for('inicio') }}">
                 <button type="button">Voltar</button>
             </a>
-
+        </div>
         </form>
 
     </div>

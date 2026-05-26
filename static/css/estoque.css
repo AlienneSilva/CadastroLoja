@@ -51,49 +51,25 @@ textarea::placeholder {
     color: #888;
     font-size: 12px;
 }
-
-/* Logo da página */
-img {
-    max-width: 150%;
-    height: 100px;
+.container{
+    width:100%;
+    max-width:1200px;
+    margin:auto;
+    padding:20px;
 }
 
-.logo {
-    text-align: center;
-    padding: 5px;
+.form{
+    display:grid;
+    gap:15px;
 }
 
-
-/* Celular     
-
-
-font-size: 5px;
-    
-    
-    align-items: last baseline;
-  
-
-
-    gap: 300px;
-
-
-        display: flex;
-    justify-content: center;
-    gap: 300px;
-    
-    */
 @media screen and (max-width:768px){
 
     .form{
         grid-template-columns:1fr;
     }
-
-    .container{
-        padding:10px;
-    }
 }
 
-/* Tablet */
 @media screen and (min-width:769px){
 
     .form{
@@ -101,11 +77,9 @@ font-size: 5px;
     }
 }
 
-/* Desktop */
 @media screen and (min-width:992px){
 
     .form{
         grid-template-columns:1fr 1fr 1fr;
     }
 }
-
