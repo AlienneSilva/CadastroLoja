@@ -34,7 +34,8 @@
             </div>
             <div class="form_grupo">
                 <label>Valor Unitário</label>
-                <input type="number" name="valorUni" class="form_input" placeholder="Valor da Unidade" required>
+                  <input type="number" name="valorUni" step="0.01" min="0" class="form_input" placeholder="Valor da Unidade, Ex.: 10,50"  pattern="^\d+([,]\d{1,2})?$"required>
+            
             </div>
 
             <div class="form_grupo">

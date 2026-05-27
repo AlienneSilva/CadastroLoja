@@ -40,8 +40,10 @@
             </div>
             <div class="form_grupo">
                 <label>Valor Pago</label>
-                <input type="number" name="valorPago" class="form_input" placeholder="Valor Pago" required>
+                <input type="number" name="valorPago" class="form_input" step="0.01" min="0" placeholder="Valor Pago" pattern="^\d+([,]\d{1,2})?$" required>
+                  
             </div>
+    
 
         <div class="botoes">
 

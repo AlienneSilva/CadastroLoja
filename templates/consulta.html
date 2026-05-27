@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<meta charset="UTF-8">
+
+<title>Consulta</title>
+
+</head>
+
+<body>
+
+<h1>Pesquisar vendas</h1>
+<!--Barra de pequisa para os registros feitos nas paginas de cadastro e estoque-->
+<form>
+
+<input
+type="text"
+name="pesquisa"
+placeholder="Nome ou produto">
+
+<button type="submit">
+
+Pesquisar
+
+</button>
+
+</form>
+
+<!--Tablema com os regitros feitos-->
+<table border="1">
+
+    <tr>
+        <th>Nome</th>
+        <th>Produto</th>
+        <th>Peças</th>
+        <th>Valor Total</th>
+        <th>Ações</th>
+    </tr>
+
+    {% for venda in vendas %}
+
+    <tr>
+
+        <td>{{ venda["Nome"] }}</td>
+
+        <td>{{ venda["Produto"] }}</td>
+
+        <td>{{ venda["Peças"] }}</td>
+
+        <td>
+            R$ {{ "%.2f"|format(venda["Valor Total"]|default("0")|replace(",", ".")|float)|replace(".", ",") }}
+        </td>
+
+        <td> <!--Botão de exclusão do registro feito na planilha exclui automaticamente no google sheets-->
+            <a href="{{ url_for('excluir', linha=venda['linha']) }}"
+               onclick="return confirm('Deseja excluir este registro?')">
+
+               <button>Excluir</button>
+
+            </a>
+        </td>
+
+    </tr>
+
+    {% endfor %}
+
+</table>
+<!--Botão que retorna a pagina inicial-->
+            <a href="{{ url_for('inicio') }}">
+                <button type="button">Voltar</button>
+            </a>
+
+</body>
+</html>

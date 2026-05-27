@@ -78,16 +78,18 @@ except Exception as erro:
     print("Erro ao abrir planilha Estoque:")
     print(erro)
 
-cabecalho_estoque = [
+cabecalhoEstoque = [
+
     "Responsável",
     "Quantidade",
     "Itens",
     "Valor Pago",
+    "Valor Unitário",
     "Data Registro"
 ]
 
-if aba_estoque.row_values(1) != cabecalho_estoque:
-    aba_estoque.insert_row(cabecalho_estoque, 1)
+if aba_estoque.row_values(1) != cabecalhoEstoque:
+    aba_estoque.insert_row(cabecalhoEstoque, 1)
 
 
 # =====================
@@ -126,25 +128,33 @@ def dashboard():
 
         try:
             produto = item["Itens"]
-            quantidade = int(item["Quantidade"])
-            valor_pago = float(item["Valor Pago"])
 
-            # Guarda quantidade e custo unitário
+            quantidade = int(item["Quantidade"])
+
+            valor_unitario = float(
+                str(item["Valor Unitário"]).replace(",", ".")
+            )
+
             produtos_estoque[produto] = {
+
                 "quantidade": quantidade,
-                "custo": valor_pago
+                "custo": valor_unitario
             }
 
         except:
             continue
 
-    # Lê vendas
+# Lê vendas
     for venda in vendas:
 
         try:
             produto = venda["Produto"]
+
             qtd_vendida = int(venda["Peças"])
-            valor_total = float(venda["Valor Total"])
+
+            valor_total = float(
+                str(venda["Valor Total"]).replace(",", ".")
+            )
 
             receita += valor_total
 
@@ -153,7 +163,7 @@ def dashboard():
                 + qtd_vendida
             )
 
-            # custo somente dos itens vendidos
+        # custo apenas dos itens vendidos
             if produto in produtos_estoque:
 
                 custo_unitario = produtos_estoque[produto]["custo"]
@@ -162,35 +172,102 @@ def dashboard():
                     qtd_vendida * custo_unitario
                 )
 
-        except:
-            continue
+        except Exception as erro:
+            print(erro)
+        continue
+
+    saidas=[]
+
+    for venda in vendas:
+
+        saidas.append({
+
+            "produto":venda["Produto"],
+            "qtd":venda["Peças"],
+            "data":venda["Data Registro"]
+
+        })
 
 
     # Calcula estoque restante
+   # Calcula estoque restante
     estoque_atual = {}
 
     for produto in produtos_estoque:
 
-        comprado = produtos_estoque[produto]["quantidade"]
+        quantidade_comprada = produtos_estoque[produto]["quantidade"]
 
         vendido = produtos_vendidos.get(produto, 0)
 
-        estoque_atual[produto] = comprado - vendido
+        restante = quantidade_comprada - vendido
 
+        valor_unitario = produtos_estoque[produto]["custo"]
 
+        valor_pago = quantidade_comprada * valor_unitario
+
+        estoque_atual[produto] = {
+
+            "restante": restante,
+
+            "valor_pago": round(valor_pago, 2),
+
+            "valor_unitario": round(valor_unitario, 2)
+
+        }
     lucro = receita - custo_total_vendido
 
+    print("Receita:", receita)
+    print("Custo:", custo_total_vendido)
+    print("Lucro:", lucro)
+
     return render_template(
-    "dashboard.html",
-    receita=round(receita,2),
-    custo=round(custo_total_vendido,2),
-    lucro=round(lucro,2),
-    estoque=estoque_atual,
+        "dashboard.html",
+        receita=round(receita,2),
+        custo=round(custo_total_vendido,2),
+        lucro=round(lucro,2),
+        estoque=estoque_atual,
+        saidas=saidas
+    )
+@app.route("/consulta")
+def consulta():
 
-    produtos=list(estoque_atual.keys()),
-    quantidades=list(estoque_atual.values())
-)
+    registros = aba_vendas.get_all_values()
 
+    cabecalho = registros[0]
+    dados = registros[1:]
+
+    vendas = []
+
+    for i, linha in enumerate(dados, start=2):
+
+        venda = dict(zip(cabecalho, linha))
+
+        venda["linha"] = i
+
+        vendas.append(venda)
+
+    termo = request.args.get("pesquisa", "")
+
+    if termo:
+
+        vendas = [
+
+            venda for venda in vendas
+
+            if termo.lower() in venda["Nome"].lower()
+            or termo.lower() in venda["Produto"].lower()
+        ]
+
+    return render_template(
+        "consulta.html",
+        vendas=vendas
+    )
+@app.route("/excluir/<int:linha>")
+def excluir(linha):
+
+    aba_vendas.delete_rows(linha)
+
+    return redirect(url_for("consulta"))
 # =====================
 # FUNÇÕES
 # =====================
@@ -210,7 +287,7 @@ def gravar_venda():
     contato = request.form["contato"]
     pecas = request.form["pecas"]
     produto = request.form["produto"]
-    valorUni = request.form["valorUni"]
+    valorUni = request.form["valorUni"].replace(",", ".")
     canal = request.form["canal"]
     conta = request.form["conta"]
 
@@ -243,17 +320,22 @@ def gravar_estoque():
     responsa = request.form["responsa"]
     qtd = request.form["qtd"]
     itens = request.form["itens"]
-    valorPago = request.form["valorPago"]
+    valorPago = request.form["valorPago"].replace(",", ".")
+
+    valor_unitario = float(valorPago) / int(qtd)
 
     data_registro = datetime.now().strftime("%d/%m/%Y")
 
     aba_estoque.append_row([
+       
         responsa,
         qtd,
         itens,
         valorPago,
+        round(valor_unitario,2),
         data_registro
     ])
+
 
     return redirect(url_for("estoque"))
 

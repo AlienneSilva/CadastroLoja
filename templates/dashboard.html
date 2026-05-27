@@ -15,39 +15,59 @@
 
 
     <h1>Financeiro</h1>
-
-
-
     <div class="dados">
 
-        <div class="item">
-            <label>Receita:</label>
-            <p>R$ {{ receita }}</p>
-        </div>
-
-        <div class="item">
-            <label>Custo:</label>
-            <p>R$ {{ custo }}</p>
-        </div>
-
-        <div class="item">
-            <label>Lucro:</label>
-            <p>R$ {{ lucro }}</p>
-        </div>
-
+    <div class="card">
+        <h2>Receita</h2>
+        <p>
+            R$ {{ "%.2f"|format(receita)|replace(".", ",") }}
+        </p>
     </div>
 
-    <h2>Estoque Atual</h2>
+    <div class="card">
+        <h2>Custo</h2>
+        <p>
+            R$ {{ "%.2f"|format(custo)|replace(".", ",") }}
+        </p>
+    </div>
 
-    <ul>
-        {% for produto, quantidade in estoque.items() %}
+    <div class="card">
+        <h2>Lucro</h2>
+        <p>
+            R$ {{ "%.2f"|format(lucro)|replace(".", ",") }}
+        </p>
+    </div>
 
-        <li>
-            {{ produto }} : {{ quantidade }} restantes
-        </li>
+</div>
 
-        {% endfor %}
-    </ul>
+
+
+ <h2>Estoque Atual</h2>
+
+
+
+
+<table border="1">
+<tr>
+    <th>Produto:</th>
+    <th>Restante:</th>
+    <th>Valor Pago:</th>
+    <th>Valor Unitário:</th>
+</tr>
+{% for produto, dados in estoque.items() %}
+<tr>
+    <td>{{ produto }}</td>
+    <td>{{ dados.restante }}</td>
+    <td>R$ {{ "%.2f"|format(dados.valor_pago)|replace(".", ",") }}</td>
+    <td>R$ {{ "%.2f"|format(dados.valor_unitario)|replace(".", ",") }}</td>
+</tr>
+{% endfor %}
+</table>
+
+
+
+
+
     <div class="botoes">
 
         <a href="{{ url_for('inicio') }}">
