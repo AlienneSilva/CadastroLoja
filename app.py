@@ -139,23 +139,29 @@ def dashboard():
 
     produtos_estoque = {}
     produtos_vendidos = {}
+    print("PRODUTOS ESTOQUE:")
+    print(produtos_estoque.keys())
+    for item in estoque:
+
+        print(item)
+
+        break
 
     # Lê estoque
     for item in estoque:
 
         try:
 
-            produto = item["Itens"]
+            produto = item["Itens"].strip().lower()
 
             quantidade = int(item["Quantidade"])
 
-            print("VALOR PAGO BRUTO:", item["Valor Pago"])
 
             valor_pago = converter_valor(
                 item["Valor Pago"]
             )
 
-            print("VALOR UNITÁRIO BRUTO:", item["Valor Unitário"])
+    
 
             valor_unitario = converter_valor(
                 item["Valor Unitário"]
@@ -206,7 +212,7 @@ def dashboard():
 
         try:
 
-            produto = venda["Produto"]
+            produto = venda["Produto"].strip().lower()
 
             qtd_vendida = int(venda["Peças"])
 
@@ -224,6 +230,7 @@ def dashboard():
 
                 + qtd_vendida
             )
+            print("PRODUTO VENDA:", produto)
 
             if produto in produtos_estoque:
 
@@ -279,9 +286,14 @@ def dashboard():
 
             )
         }
+    print("Receita:", receita)
+    print("Custo total vendido:", custo_total_vendido)
 
     lucro = receita - custo_total_vendido
 
+    print("Lucro:", lucro)
+
+    
     return render_template(
 
         "dashboard.html",
