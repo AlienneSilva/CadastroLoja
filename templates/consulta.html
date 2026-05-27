@@ -5,172 +5,151 @@
 
 <head>
 
-<meta charset="UTF-8">
+    <meta charset="UTF-8">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/consulta.css') }}">
 
 
-<title>Consulta</title>
+    <title>Consulta</title>
 
 </head>
 
 <body>
 
-<h1>Pesquisar vendas</h1>
-<!--Barra de pequisa para os registros feitos nas paginas de cadastro e estoque-->
-<h2>Pesquisar Vendas</h2>
+    <h1>Pesquisar vendas</h1>
+    <!--Barra de pequisa para os registros feitos nas paginas de cadastro e estoque-->
+    <h2>Pesquisar Vendas</h2>
 
-<form>
+    <form>
 
-<input
-type="text"
-name="pesquisa_vendas"
-placeholder="Cliente ou produto">
+        <input type="text" name="pesquisa_vendas" placeholder="Cliente ou produto">
 
-<button>
-Pesquisar
-</button>
+        <button>
+            Pesquisar
+        </button>
 
-</form>
+    </form>
 
 
-<table>
+    <table>
 
-<tr>
+        <tr>
 
-<th>Cliente</th>
-<th>Produto</th>
-<th>Peças</th>
-<th>Valor Total</th>
-<th>Excluir</th>
+            <th>Cliente</th>
+            <th>Produto</th>
+            <th>Peças</th>
+            <th>Valor Total</th>
+            <th>Excluir</th>
 
-</tr>
+        </tr>
 
-{% for venda in vendas %}
+        {% for venda in vendas %}
 
-<tr>
+        <tr>
 
-<td>{{ venda["Nome"] }}</td>
+            <td>{{ venda["Nome"] }}</td>
 
-<td>{{ venda["Produto"] }}</td>
+            <td>{{ venda["Produto"] }}</td>
 
-<td>{{ venda["Peças"] }}</td>
+            <td>{{ venda["Peças"] }}</td>
 
-<td>{{ venda["Valor Total"] }}</td>
+            <td>{{ venda["Valor Total"] }}</td>
 
-<td>
+            <td>
 
-<a href="{{ url_for('excluir',linha=venda.linha) }}"
-onclick="return confirm('Deseja realmente excluir esta venda?')">
+                <a href="{{ url_for('excluir',linha=venda.linha) }}"
+                    onclick="return confirm('Deseja realmente excluir esta venda?')">
 
-    <button>
-        Excluir
-    </button>
+                    <button>
+                        Excluir
+                    </button>
 
-</a>
+                </a>
 
-<button>
-Excluir
-</button>
+            </td>
 
-</a>
+        </tr>
 
-</td>
+        {% endfor %}
 
-</tr>
+    </table>
 
-{% endfor %}
 
-</table>
 
+    <h2>Pesquisar Estoque</h2>
 
+    <form>
 
-<h2>Pesquisar Estoque</h2>
+        <input type="text" name="pesquisa_estoque" placeholder="Produto ou responsável">
 
-<form>
+        <button>
+            Pesquisar
+        </button>
 
-<input
-type="text"
-name="pesquisa_estoque"
-placeholder="Produto ou responsável">
+    </form>
 
-<button>
-Pesquisar
-</button>
 
-</form>
+    <table>
 
+        <tr>
 
-<table>
+            <th>Responsável</th>
+            <th>Produto</th>
+            <th>Quantidade</th>
+            <th>Valor Pago</th>
+            <th>Excluir</th>
 
-<tr>
+        </tr>
 
-<th>Responsável</th>
-<th>Produto</th>
-<th>Quantidade</th>
-<th>Valor Pago</th>
-<th>Excluir</th>
+        {% for item in estoque %}
 
-</tr>
+        <tr>
 
-{% for item in estoque %}
+            <td>{{ item["Responsável"] }}</td>
 
-<tr>
+            <td>{{ item["Itens"] }}</td>
 
-<td>{{ item["Responsável"] }}</td>
+            <td>{{ item["Quantidade"] }}</td>
 
-<td>{{ item["Itens"] }}</td>
+            <td>{{ item["Valor Pago"] }}</td>
 
-<td>{{ item["Quantidade"] }}</td>
+            <td>
 
-<td>{{ item["Valor Pago"] }}</td>
+                <a href="{{ url_for('excluir_estoque',
+linha=item.linha) }}" onclick="return confirm('Deseja realmente excluir este item do estoque?')">
 
-<td>
+                    <button>
+                        Excluir
+                    </button>
 
-<a href="{{ url_for('excluir_estoque',
-linha=item.linha) }}"
+                </a>
 
-onclick="return confirm('Deseja realmente excluir este item do estoque?')">
+            </td>
 
-<button>
-Excluir
-</button>
+        </tr>
 
-</a>
+        {% endfor %}
 
-<button>
+    </table>
 
-Excluir
 
-</button>
+    <!--Botão que retorna a pagina inicial-->
+    <div class="botoes">
 
-</a>
+        <a href="{{ url_for('inicio') }}">
 
-</td>
+            <button>
 
-</tr>
+                Voltar
 
-{% endfor %}
+            </button>
 
-</table>
+        </a>
 
-
-<!--Botão que retorna a pagina inicial-->
-<div class="botoes">
-
-<a href="{{ url_for('inicio') }}">
-
-<button>
-
-Voltar
-
-</button>
-
-</a>
-
-</div>
+    </div>
 
 
 
 </body>
+
 </html>
