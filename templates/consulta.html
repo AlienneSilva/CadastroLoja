@@ -60,7 +60,14 @@ Pesquisar
 
 <td>
 
-<a href="{{ url_for('excluir',linha=venda.linha) }}">
+<a href="{{ url_for('excluir',linha=venda.linha) }}"
+onclick="return confirm('Deseja realmente excluir esta venda?')">
+
+    <button>
+        Excluir
+    </button>
+
+</a>
 
 <button>
 Excluir
@@ -121,7 +128,15 @@ Pesquisar
 <td>
 
 <a href="{{ url_for('excluir_estoque',
-linha=item.linha) }}">
+linha=item.linha) }}"
+
+onclick="return confirm('Deseja realmente excluir este item do estoque?')">
+
+<button>
+Excluir
+</button>
+
+</a>
 
 <button>
 
