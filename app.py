@@ -283,8 +283,8 @@ def calc(valorUni, pecas):
 @app.route("/gravar_venda", methods=["POST"])
 def gravar_venda():
 
-    nome = request.form["nome"]
-    contato = request.form["contato"]
+    nome = request.form["nome"].title()
+    contato = request.form["contato"].title()
     pecas = request.form["pecas"]
     produto = request.form["produto"]
     valorUni = request.form["valorUni"].replace(",", ".")
@@ -317,7 +317,7 @@ def gravar_venda():
 @app.route("/gravar_estoque", methods=["POST"])
 def gravar_estoque():
 
-    responsa = request.form["responsa"]
+    responsa = request.form["responsa"].title()
     qtd = request.form["qtd"]
     itens = request.form["itens"]
     valorPago = request.form["valorPago"].replace(",", ".")
