@@ -5,11 +5,27 @@ import gspread
 import os
 import json
 
+def converter_valor(valor):
+
+    valor = str(valor).strip()
+
+    if valor == "":
+        return 0
+
+    valor = (
+        valor.replace("R$", "")
+              .replace(",", ".")
+              .strip()
+    )
+
+    return float(valor)
+
 app = Flask(__name__)
 
 # =====================
 # Conexão Google Sheets
 # =====================
+
 
 escopos = [
     "https://www.googleapis.com/auth/spreadsheets",
@@ -119,6 +135,7 @@ def dashboard():
 
     receita = 0
     custo_total_vendido = 0
+    custo_estoque = 0
 
     produtos_estoque = {}
     produtos_vendidos = {}
@@ -127,140 +144,228 @@ def dashboard():
     for item in estoque:
 
         try:
+
             produto = item["Itens"]
 
             quantidade = int(item["Quantidade"])
 
-            valor_unitario = float(
-                str(item["Valor Unitário"]).replace(",", ".")
+            print("VALOR PAGO BRUTO:", item["Valor Pago"])
+
+            valor_pago = converter_valor(
+                item["Valor Pago"]
             )
 
-            produtos_estoque[produto] = {
+            print("VALOR UNITÁRIO BRUTO:", item["Valor Unitário"])
 
-                "quantidade": quantidade,
-                "custo": valor_unitario
-            }
+            valor_unitario = converter_valor(
+                item["Valor Unitário"]
+            )
 
-        except:
+            custo_estoque += valor_pago
+
+            if produto in produtos_estoque:
+
+                # soma quantidade
+                produtos_estoque[produto]["quantidade"] += quantidade
+
+                # soma investimento
+                produtos_estoque[produto]["valor_pago"] += valor_pago
+
+                # custo médio
+                produtos_estoque[produto]["custo"] = (
+
+                    produtos_estoque[produto]["valor_pago"]
+
+                    /
+
+                    produtos_estoque[produto]["quantidade"]
+
+                )
+            
+
+            else:
+
+                produtos_estoque[produto] = {
+
+                    "quantidade": quantidade,
+                    "valor_pago": valor_pago,
+                    "custo": valor_unitario
+
+                }
+            
+
+        except Exception as erro:
+
+            print("ERRO ESTOQUE:", erro)
+            print(item)
             continue
 
-# Lê vendas
+
+    # Lê vendas
     for venda in vendas:
 
         try:
+
             produto = venda["Produto"]
 
             qtd_vendida = int(venda["Peças"])
 
-            valor_total = float(
-                str(venda["Valor Total"]).replace(",", ".")
+            valor_total = converter_valor(
+                venda["Valor Total"]
             )
 
             receita += valor_total
 
             produtos_vendidos[produto] = (
-                produtos_vendidos.get(produto, 0)
+
+                produtos_vendidos.get(
+                    produto,0
+                )
+
                 + qtd_vendida
             )
 
-        # custo apenas dos itens vendidos
             if produto in produtos_estoque:
 
-                custo_unitario = produtos_estoque[produto]["custo"]
+                custo_unitario = (
+                    produtos_estoque[produto]["custo"]
+                )
 
                 custo_total_vendido += (
-                    qtd_vendida * custo_unitario
+
+                    qtd_vendida
+                    *
+                    custo_unitario
+
                 )
 
         except Exception as erro:
-            print(erro)
-        continue
 
-    saidas=[]
-
-    for venda in vendas:
-
-        saidas.append({
-
-            "produto":venda["Produto"],
-            "qtd":venda["Peças"],
-            "data":venda["Data Registro"]
-
-        })
+            print("ERRO VENDAS:", erro)
+            print(venda)
+            continue
 
 
-    # Calcula estoque restante
-   # Calcula estoque restante
     estoque_atual = {}
 
     for produto in produtos_estoque:
 
-        quantidade_comprada = produtos_estoque[produto]["quantidade"]
+        quantidade_comprada = (
 
-        vendido = produtos_vendidos.get(produto, 0)
+            produtos_estoque[produto]["quantidade"]
+
+        )
+
+        vendido = produtos_vendidos.get(
+            produto,0
+        )
 
         restante = quantidade_comprada - vendido
-
-        valor_unitario = produtos_estoque[produto]["custo"]
-
-        valor_pago = quantidade_comprada * valor_unitario
 
         estoque_atual[produto] = {
 
             "restante": restante,
 
-            "valor_pago": round(valor_pago, 2),
+            "valor_pago": round(
 
-            "valor_unitario": round(valor_unitario, 2)
+                produtos_estoque[produto]["valor_pago"],
+                2
 
+            ),
+
+            "valor_unitario": round(
+
+                produtos_estoque[produto]["custo"],2
+
+            )
         }
+
     lucro = receita - custo_total_vendido
 
-    print("Receita:", receita)
-    print("Custo:", custo_total_vendido)
-    print("Lucro:", lucro)
-
     return render_template(
+
         "dashboard.html",
+
         receita=round(receita,2),
-        custo=round(custo_total_vendido,2),
+        custo=round(custo_estoque,2),
         lucro=round(lucro,2),
-        estoque=estoque_atual,
-        saidas=saidas
+
+        estoque=estoque_atual
+
     )
 @app.route("/consulta")
 def consulta():
 
-    registros = aba_vendas.get_all_values()
+    tipo = request.args.get(
+        "tipo",
+        "vendas"
+    )
+
+    termo = request.args.get(
+        "pesquisa",
+        ""
+    ).lower()
+
+
+    if tipo == "vendas":
+
+        registros = aba_vendas.get_all_values()
+
+    else:
+
+        registros = aba_estoque.get_all_values()
+
 
     cabecalho = registros[0]
     dados = registros[1:]
 
-    vendas = []
+    resultados = []
 
     for i, linha in enumerate(dados, start=2):
 
-        venda = dict(zip(cabecalho, linha))
+        item = dict(
+            zip(cabecalho, linha)
+        )
 
-        venda["linha"] = i
+        item["linha"] = i
 
-        vendas.append(venda)
+        resultados.append(item)
 
-    termo = request.args.get("pesquisa", "")
 
     if termo:
 
-        vendas = [
+        if tipo == "vendas":
 
-            venda for venda in vendas
+            resultados = [
 
-            if termo.lower() in venda["Nome"].lower()
-            or termo.lower() in venda["Produto"].lower()
-        ]
+                item for item in resultados
+
+                if termo in item["Nome"].lower()
+
+                or termo in item["Produto"].lower()
+
+            ]
+
+        else:
+
+            resultados = [
+
+                item for item in resultados
+
+                if termo in item["Itens"].lower()
+
+                or termo in item["Responsável"].lower()
+
+            ]
+
 
     return render_template(
+
         "consulta.html",
-        vendas=vendas
+
+        resultados=resultados,
+
+        tipo=tipo
     )
 @app.route("/excluir/<int:linha>")
 def excluir(linha):
@@ -318,24 +423,42 @@ def gravar_venda():
 def gravar_estoque():
 
     responsa = request.form["responsa"].title()
-    qtd = request.form["qtd"]
-    itens = request.form["itens"]
-    valorPago = request.form["valorPago"].replace(",", ".")
 
-    valor_unitario = float(valorPago) / int(qtd)
+    qtd = int(request.form["qtd"])
+
+    itens = request.form["itens"]
+
+    valorPago = request.form["valorPago"]
+
+    valorPago = valorPago.replace(",", ".")
+
+    valor_pago_float = float(valorPago)
+
+    valor_unitario = valor_pago_float / qtd
 
     data_registro = datetime.now().strftime("%d/%m/%Y")
 
-    aba_estoque.append_row([
-       
-        responsa,
-        qtd,
-        itens,
-        valorPago,
-        round(valor_unitario,2),
-        data_registro
-    ])
+    print("Valor recebido:", valorPago)
 
+    aba_estoque.append_row(
+
+        [
+
+            responsa,
+            qtd,
+            itens,
+
+            f"{valor_pago_float:.2f}",
+
+            f"{valor_unitario:.2f}",
+
+            data_registro
+
+        ],
+
+        value_input_option="RAW"
+
+    )
 
     return redirect(url_for("estoque"))
 

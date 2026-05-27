@@ -72,6 +72,18 @@ Pesquisar
     {% endfor %}
 
 </table>
+<div class="botoes">
+
+<a href="{{ url_for('consulta',tipo='vendas') }}">
+<button>Vendas</button>
+</a>
+
+<a href="{{ url_for('consulta',tipo='estoque') }}">
+<button>Estoque</button>
+</a>
+
+</div>
+
 <!--Botão que retorna a pagina inicial-->
             <a href="{{ url_for('inicio') }}">
                 <button type="button">Voltar</button>

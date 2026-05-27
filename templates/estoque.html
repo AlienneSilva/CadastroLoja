@@ -26,7 +26,7 @@
 
             <div class="form_grupo">
                 <label>Número de peças</label>
-                <input type="number" name="qtd" class="form_input" placeholder="Número de peças compradas" required>
+                <input type="number" name="qtd" min="1" class="form_input" placeholder="Número de peças compradas" required>
             </div>
             <div class="form_grupo">
                 <label>Produto</label>
@@ -40,7 +40,7 @@
             </div>
             <div class="form_grupo">
                 <label>Valor Pago</label>
-                <input type="number" name="valorPago" class="form_input" step="0.01" min="0" placeholder="Valor Pago" pattern="^\d+([,]\d{1,2})?$" required>
+                <input type="text" name="valorPago" class="form_input" placeholder="Valor Pago" required>
                   
             </div>
     
