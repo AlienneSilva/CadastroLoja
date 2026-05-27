@@ -296,76 +296,86 @@ def dashboard():
 @app.route("/consulta")
 def consulta():
 
-    tipo = request.args.get(
-        "tipo",
-        "vendas"
-    )
-
-    termo = request.args.get(
-        "pesquisa",
+    # PESQUISA VENDAS
+    termo_venda = request.args.get(
+        "pesquisa_vendas",
         ""
     ).lower()
 
+    registros_vendas = aba_vendas.get_all_values()
 
-    if tipo == "vendas":
+    cabecalho_v = registros_vendas[0]
+    dados_v = registros_vendas[1:]
 
-        registros = aba_vendas.get_all_values()
+    vendas = []
 
-    else:
+    for i, linha in enumerate(dados_v, start=2):
 
-        registros = aba_estoque.get_all_values()
+        venda = dict(
+            zip(cabecalho_v, linha)
+        )
+
+        venda["linha"] = i
+
+        vendas.append(venda)
+
+    if termo_venda:
+
+        vendas = [
+
+            venda for venda in vendas
+
+            if termo_venda in venda["Nome"].lower()
+
+            or termo_venda in venda["Produto"].lower()
+
+        ]
 
 
-    cabecalho = registros[0]
-    dados = registros[1:]
+    # PESQUISA ESTOQUE
+    termo_estoque = request.args.get(
+        "pesquisa_estoque",
+        ""
+    ).lower()
 
-    resultados = []
+    registros_estoque = aba_estoque.get_all_values()
 
-    for i, linha in enumerate(dados, start=2):
+    cabecalho_e = registros_estoque[0]
+    dados_e = registros_estoque[1:]
+
+    estoque = []
+
+    for i, linha in enumerate(dados_e, start=2):
 
         item = dict(
-            zip(cabecalho, linha)
+            zip(cabecalho_e, linha)
         )
 
         item["linha"] = i
 
-        resultados.append(item)
+        estoque.append(item)
 
+    if termo_estoque:
 
-    if termo:
+        estoque = [
 
-        if tipo == "vendas":
+            item for item in estoque
 
-            resultados = [
+            if termo_estoque in item["Itens"].lower()
 
-                item for item in resultados
+            or termo_estoque in item["Responsável"].lower()
 
-                if termo in item["Nome"].lower()
-
-                or termo in item["Produto"].lower()
-
-            ]
-
-        else:
-
-            resultados = [
-
-                item for item in resultados
-
-                if termo in item["Itens"].lower()
-
-                or termo in item["Responsável"].lower()
-
-            ]
+        ]
 
 
     return render_template(
 
         "consulta.html",
 
-        resultados=resultados,
+        vendas=vendas,
 
-        tipo=tipo
+        estoque=estoque
+
     )
 @app.route("/excluir/<int:linha>")
 def excluir(linha):
@@ -373,6 +383,17 @@ def excluir(linha):
     aba_vendas.delete_rows(linha)
 
     return redirect(url_for("consulta"))
+@app.route("/excluir_estoque/<int:linha>")
+def excluir_estoque(linha):
+
+    aba_estoque.delete_rows(linha)
+
+    return redirect(
+        url_for(
+            "consulta",
+            tipo="estoque"
+        )
+    )
 # =====================
 # FUNÇÕES
 # =====================

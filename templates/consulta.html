@@ -18,76 +18,144 @@
 
 <h1>Pesquisar vendas</h1>
 <!--Barra de pequisa para os registros feitos nas paginas de cadastro e estoque-->
+<h2>Pesquisar Vendas</h2>
+
 <form>
 
 <input
 type="text"
-name="pesquisa"
-placeholder="Nome ou produto">
+name="pesquisa_vendas"
+placeholder="Cliente ou produto">
 
-<button type="submit">
-
+<button>
 Pesquisar
-
 </button>
 
 </form>
 
-<!--Tablema com os regitros feitos-->
-<table border="1">
 
-    <tr>
-        <th>Nome</th>
-        <th>Produto</th>
-        <th>Peças</th>
-        <th>Valor Total</th>
-        <th>Ações</th>
-    </tr>
+<table>
 
-    {% for venda in vendas %}
+<tr>
 
-    <tr>
+<th>Cliente</th>
+<th>Produto</th>
+<th>Peças</th>
+<th>Valor Total</th>
+<th>Excluir</th>
 
-        <td>{{ venda["Nome"] }}</td>
+</tr>
 
-        <td>{{ venda["Produto"] }}</td>
+{% for venda in vendas %}
 
-        <td>{{ venda["Peças"] }}</td>
+<tr>
 
-        <td>
-            R$ {{ "%.2f"|format(venda["Valor Total"]|default("0")|replace(",", ".")|float)|replace(".", ",") }}
-        </td>
+<td>{{ venda["Nome"] }}</td>
 
-        <td> <!--Botão de exclusão do registro feito na planilha exclui automaticamente no google sheets-->
-            <a href="{{ url_for('excluir', linha=venda['linha']) }}"
-               onclick="return confirm('Deseja excluir este registro?')">
+<td>{{ venda["Produto"] }}</td>
 
-               <button>Excluir</button>
+<td>{{ venda["Peças"] }}</td>
 
-            </a>
-        </td>
+<td>{{ venda["Valor Total"] }}</td>
 
-    </tr>
+<td>
 
-    {% endfor %}
+<a href="{{ url_for('excluir',linha=venda.linha) }}">
 
-</table>
-<div class="botoes">
+<button>
+Excluir
+</button>
 
-<a href="{{ url_for('consulta',tipo='vendas') }}">
-<button>Vendas</button>
 </a>
 
-<a href="{{ url_for('consulta',tipo='estoque') }}">
-<button>Estoque</button>
+</td>
+
+</tr>
+
+{% endfor %}
+
+</table>
+
+
+
+<h2>Pesquisar Estoque</h2>
+
+<form>
+
+<input
+type="text"
+name="pesquisa_estoque"
+placeholder="Produto ou responsável">
+
+<button>
+Pesquisar
+</button>
+
+</form>
+
+
+<table>
+
+<tr>
+
+<th>Responsável</th>
+<th>Produto</th>
+<th>Quantidade</th>
+<th>Valor Pago</th>
+<th>Excluir</th>
+
+</tr>
+
+{% for item in estoque %}
+
+<tr>
+
+<td>{{ item["Responsável"] }}</td>
+
+<td>{{ item["Itens"] }}</td>
+
+<td>{{ item["Quantidade"] }}</td>
+
+<td>{{ item["Valor Pago"] }}</td>
+
+<td>
+
+<a href="{{ url_for('excluir_estoque',
+linha=item.linha) }}">
+
+<button>
+
+Excluir
+
+</button>
+
+</a>
+
+</td>
+
+</tr>
+
+{% endfor %}
+
+</table>
+
+
+<!--Botão que retorna a pagina inicial-->
+<div class="botoes">
+
+<a href="{{ url_for('inicio') }}">
+
+<button>
+
+Voltar
+
+</button>
+
 </a>
 
 </div>
 
-<!--Botão que retorna a pagina inicial-->
-            <a href="{{ url_for('inicio') }}">
-                <button type="button">Voltar</button>
-            </a>
+
 
 </body>
 </html>
