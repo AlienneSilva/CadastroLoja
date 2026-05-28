@@ -17,53 +17,59 @@
     <h1>Financeiro</h1>
     <div class="dados">
 
-    <div class="card">
-        <h2>Receita</h2>
-        <p>
-            R$ {{ "%.2f"|format(receita)|replace(".", ",") }}
-        </p>
+        <div class="card">
+            <h2>Receita</h2>
+            <p>
+                R$ {{ "%.2f"|format(receita)|replace(".", ",") }}
+            </p>
+        </div>
+
+        <div class="card">
+            <h2>Custo</h2>
+            <p>
+                R$ {{ "%.2f"|format(custo)|replace(".", ",") }}
+            </p>
+        </div>
+
+        <div class="card">
+            <h2>Lucro</h2>
+            <p>
+                R$ {{ "%.2f"|format(lucro)|replace(".", ",") }}
+            </p>
+        </div>
+
     </div>
 
-    <div class="card">
-        <h2>Custo</h2>
-        <p>
-            R$ {{ "%.2f"|format(custo)|replace(".", ",") }}
-        </p>
-    </div>
-
-    <div class="card">
-        <h2>Lucro</h2>
-        <p>
-            R$ {{ "%.2f"|format(lucro)|replace(".", ",") }}
-        </p>
-    </div>
-
-</div>
 
 
-
- <h2>Estoque Atual</h2>
+    <h2>Estoque Atual</h2>
 
 
 
 
-<table border="1">
-<tr>
-    <th>Produto</th>
-    <th>Restante</th>
-    <th>Valor Pago</th>
-    <th>Valor Unitário</th>
-</tr>
-{% for produto, dados in estoque.items() %}
-<tr>
-    <td>{{ produto }}</td>
-    <td>{{ dados.restante }}</td>
-    <td>R$ {{ "%.2f"|format(dados.valor_pago)|replace(".", ",") }}</td>
-    <td>R$ {{ "%.2f"|format(dados.valor_unitario)|replace(".", ",") }}</td>
-</tr>
-{% endfor %}
-</table>
+    <table border="1">
+        <tr>
+            <th>Produto</th>
+            <th>Restante</th>
+            <th>Valor Pago</th>
+            <th>Valor Unitário</th>
+        </tr>
+        {% for produto, dados in estoque.items() %}
+        <tr>
+            <td>{{ produto }}</td>
+            <td>{{ dados.restante }}</td>
+            <td>R$ {{ "%.2f"|format(dados.valor_pago)|replace(".", ",") }}</td>
+            <td>R$ {{ "%.2f"|format(dados.valor_unitario)|replace(".", ",") }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    <h3 class="investimento">
 
+        Valor Investido em Estoque:
+
+        R$ {{ "%.2f"|format(investimento)|replace(".", ",") }}
+
+    </h3>
 
 
 

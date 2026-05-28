@@ -15,27 +15,37 @@
     <h1 class="title1">Sistema de Controle de Vendas</h1>
 
     <div class="botoes">
-    <a href="{{ url_for('cadastro') }}">
-        <button>Ir para Cadastro</button>
-    </a>
+        <a href="{{ url_for('cadastro') }}">
+            <button>Ir para Cadastro</button>
+        </a>
 
-    <a href="{{ url_for('estoque') }}">
-        <button>Ir para Estoque</button>
-    </a>
+        <a href="{{ url_for('estoque') }}">
+            <button>Ir para Estoque</button>
+        </a>
 
-    <a href="{{ url_for('dashboard') }}">
+        <a href="{{ url_for('dashboard') }}">
 
-        <button type="button">Dados Financeiro</button>
-    </a>
+            <button type="button">Dados Financeiro</button>
+        </a>
         <a href="{{ url_for('consulta') }}">
-        <button class="botao">
-            Consultar Registros
-        </button>
-    </a>
-    <a href="{{ url_for('inicio') }}">
+            <button class="botao">
+                Consultar Registros
+            </button>
+        </a>
+        <a href="{{ url_for('composicao') }}">
 
-        <button class="action" type="button">Voltar</button>
-    </a>
+            <button class="action">
+
+                Composição
+
+            </button>
+
+        </a>
+        <a href="{{ url_for('inicio') }}">
+
+            <button class="action" type="button">Voltar</button>
+        </a>
+
     </div>
 
 

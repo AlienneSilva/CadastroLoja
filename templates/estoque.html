@@ -15,45 +15,169 @@
 
     <div class="form">
 
-        <h1>Formulário de Cadastro de estoque</h1>
+        <h1>
+            Formulário de Cadastro de estoque
+        </h1>
 
-        <form action="/gravar_estoque" method="POST">
+        <form
+        action="/gravar_estoque"
+        method="POST">
 
             <div class="form_grupo">
-                <label>Nome do Responsável</label>
-                <input type="text" name="responsa" class="form_input" placeholder="Nome do Responsável" required>
+
+                <label>
+                    Nome do Responsável
+                </label>
+
+                <input
+                type="text"
+
+                name="responsa"
+
+                class="form_input"
+
+                placeholder="Nome do Responsável"
+
+                required>
+
             </div>
 
+
             <div class="form_grupo">
-                <label>Número de peças</label>
-                <input type="number" name="qtd" min="1" class="form_input" placeholder="Número de peças compradas" required>
+
+                <label>
+                    Número de peças
+                </label>
+
+                <input
+                type="number"
+
+                name="qtd"
+
+                min="1"
+
+                class="form_input"
+
+                placeholder="Número de peças compradas"
+
+                required>
+
             </div>
+
+
             <div class="form_grupo">
-                <label>Produto</label>
-                <select name="itens" class="form_input">
-                    <option value="Selecione">Selecione</option>
-                    <option value="Copo Inox">Copo Inox</option>
-                    <option value="Caneca">Caneca Cerâmica</option>
+
+                <label>
+                    Produto / Material
+                </label>
+
+                <select
+                name="itens"
+
+                class="form_input"
+
+                required>
+
+                    <option value="">
+                        Selecione
+                    </option>
+
+                    <!-- MATÉRIA PRIMA -->
+
+                    <option value="mdf">
+                        MDF
+                    </option>
+
+                    <option value="argola">
+                        Argola
+                    </option>
+
+                    <option value="papel adesivo">
+                        Papel Adesivo
+                    </option>
+
+                    <option value="cordao">
+                        Cordão
+                    </option>
+
+                    <option value="embalagem">
+                        Embalagem
+                    </option>
+
+
+                    <!-- PRODUTOS PRONTOS -->
+
+                    <option value="caneca">
+                        Caneca
+                    </option>
+
+                    <option value="copo inox">
+                        Copo Inox
+                    </option>
+
+                    <option value="camiseta">
+                        Camiseta
+                    </option>
+
                 </select>
+
             </div>
+
+
             <div class="form_grupo">
-                <label>Valor Pago</label>
-                <input type="text" name="valorPago" class="form_input" placeholder="Valor Pago" required>
-                  
+
+                <label>
+                    Valor Pago
+                </label>
+
+                <input
+                type="number"
+
+                step="0.01"
+
+                min="0"
+
+                name="valorPago"
+
+                class="form_input"
+
+                placeholder="Valor Pago"
+
+                required>
+
             </div>
-    
 
-        <div class="botoes">
 
-            <input type="hidden" name="acao" value="enviar">
-            <button type="submit" class="submit_btn">
-                Cadastrar
-            </button>
+            <div class="botoes">
 
-            <a href="{{ url_for('inicio') }}">
-                <button type="button">Voltar</button>
-            </a>
-        </div>
+                <input
+                type="hidden"
+
+                name="acao"
+
+                value="enviar">
+
+                <button
+                type="submit"
+
+                class="submit_btn">
+
+                    Cadastrar
+
+                </button>
+
+                <a href="{{ url_for('inicio') }}">
+
+                    <button type="button">
+
+                        Voltar
+
+                    </button>
+
+                </a>
+
+            </div>
+
         </form>
 
     </div>

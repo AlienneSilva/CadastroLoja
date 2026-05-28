@@ -59,13 +59,51 @@ cliente = gspread.authorize(credenciais)
 # PLANILHA VENDAS
 # =====================
 
+# =====================
+# PLANILHA VENDAS
+# =====================
+
 try:
-   planilha_vendas = cliente.open("Cadastros")
-   aba_vendas = planilha_vendas.sheet1
+
+    planilha_vendas = cliente.open(
+        "Cadastros"
+    )
+
+    aba_vendas = (
+        planilha_vendas.sheet1
+    )
 
 except Exception as erro:
-    print("Erro ao abrir planilha Cadastros:")
+
+    print(
+        "Erro ao abrir planilha Cadastros:"
+    )
+
     print(erro)
+
+
+# =====================
+# PLANILHA COMPOSICAO
+# =====================
+
+try:
+
+    planilha_composicao = cliente.open(
+        "COMPOSICAO"
+    )
+
+    aba_composicao = (
+        planilha_composicao.sheet1
+    )
+
+except Exception as erro:
+
+    print(
+        "Erro ao abrir composição:"
+    )
+
+    print(erro)
+
 
 cabecalho_vendas = [
     "Nome",
@@ -93,6 +131,7 @@ try:
 except Exception as erro:
     print("Erro ao abrir planilha Estoque:")
     print(erro)
+
 
 cabecalhoEstoque = [
 
@@ -126,185 +165,139 @@ def cadastro():
 def estoque():
     return render_template("estoque.html")
 
+@app.route("/composicao")
+def composicao():
+
+    return render_template(
+        "composicao.html"
+    )
 
 @app.route("/dashboard")
 def dashboard():
-
     vendas = aba_vendas.get_all_records()
     estoque = aba_estoque.get_all_records()
-
+    composicoes = (aba_composicao.get_all_records())
+    
     receita = 0
     custo_total_vendido = 0
     custo_estoque = 0
-
     produtos_estoque = {}
     produtos_vendidos = {}
-    print("PRODUTOS ESTOQUE:")
-    print(produtos_estoque.keys())
+
+# =====================
+# ESTOQUE
+# =====================
+
     for item in estoque:
-
-        print(item)
-
-        break
-
-    # Lê estoque
-    for item in estoque:
-
         try:
-
-            produto = item["Itens"].strip().lower()
-
+            produto = (item["Itens"].strip().lower())
             quantidade = int(item["Quantidade"])
-
-
-            valor_pago = converter_valor(
-                item["Valor Pago"]
-            )
-
-    
-
-            valor_unitario = converter_valor(
-                item["Valor Unitário"]
-            )
-
+            valor_pago = converter_valor(item["Valor Pago"])
+            valor_unitario = converter_valor(item["Valor Unitário"])
             custo_estoque += valor_pago
-
             if produto in produtos_estoque:
-
-                # soma quantidade
                 produtos_estoque[produto]["quantidade"] += quantidade
-
-                # soma investimento
                 produtos_estoque[produto]["valor_pago"] += valor_pago
-
-                # custo médio
-                produtos_estoque[produto]["custo"] = (
-
-                    produtos_estoque[produto]["valor_pago"]
-
-                    /
-
-                    produtos_estoque[produto]["quantidade"]
-
-                )
-            
-
+                produtos_estoque[produto]["custo"] = (produtos_estoque[produto]["valor_pago"]
+                                                      /
+                                                      produtos_estoque[produto]["quantidade"]
+                                                      )
             else:
-
-                produtos_estoque[produto] = {
-
-                    "quantidade": quantidade,
-                    "valor_pago": valor_pago,
-                    "custo": valor_unitario
-
-                }
-            
-
+                produtos_estoque[produto] = {"quantidade": quantidade,"valor_pago": valor_pago,"custo": valor_unitario}
         except Exception as erro:
-
-            print("ERRO ESTOQUE:", erro)
+            print("ERRO ESTOQUE:")
+            print(erro)
             print(item)
-            continue
+        continue
 
 
-    # Lê vendas
+# =====================
+# VENDAS
+# =====================
+
     for venda in vendas:
-
         try:
-
-            produto = venda["Produto"].strip().lower()
-
+            produto = (venda["Produto"].strip().lower())
             qtd_vendida = int(venda["Peças"])
-
-            valor_total = converter_valor(
-                venda["Valor Total"]
-            )
-
+            valor_total = converter_valor(venda["Valor Total"])
             receita += valor_total
+            produtos_vendidos[produto] = (produtos_vendidos.get(produto,0)
+                                          + qtd_vendida)
+            tem_composicao = False
 
-            produtos_vendidos[produto] = (
 
-                produtos_vendidos.get(
-                    produto,0
-                )
+        # =====================
+        # PROCURA COMPOSIÇÃO
+        # =====================
 
-                + qtd_vendida
-            )
-            print("PRODUTO VENDA:", produto)
+            for comp in composicoes:
+                produto_comp = (comp["Produto"].strip().lower())
+                if produto == produto_comp:
+                    tem_composicao = True
+                    material = (comp["Material"].strip().lower())
+                    print("MATERIAL:", material)
+                    print("EXISTE?", material in produtos_estoque)
+                    print(produtos_estoque.keys())
+                    qtd_material = float(comp["Quantidade Usada"])
+                    if material in produtos_estoque:
+                        custo_material = (produtos_estoque[material]["custo"])
+                        custo_total_vendido += (
+                            qtd_vendida
+                            *
+                            qtd_material
+                            *
+                            custo_material
+                            )
 
-            if produto in produtos_estoque:
 
-                custo_unitario = (
-                    produtos_estoque[produto]["custo"]
-                )
+        # =====================
+        # PRODUTO SEM COMPOSIÇÃO
+        # =====================
 
-                custo_total_vendido += (
-
-                    qtd_vendida
-                    *
-                    custo_unitario
-
-                )
+                if not tem_composicao:
+                    if produto in produtos_estoque:
+                        custo_unitario = (produtos_estoque[produto]["custo"])
+                        custo_total_vendido += (qtd_vendida
+                                                *
+                                                custo_unitario
+                                                )
 
         except Exception as erro:
-
-            print("ERRO VENDAS:", erro)
+            print("ERRO VENDAS:")
+            print(erro)
             print(venda)
             continue
 
 
+# =====================
+# ESTOQUE ATUAL
+# =====================
+
     estoque_atual = {}
 
     for produto in produtos_estoque:
-
-        quantidade_comprada = (
-
-            produtos_estoque[produto]["quantidade"]
-
-        )
-
-        vendido = produtos_vendidos.get(
-            produto,0
-        )
-
-        restante = quantidade_comprada - vendido
-
-        estoque_atual[produto] = {
-
-            "restante": restante,
-
-            "valor_pago": round(
-
-                produtos_estoque[produto]["valor_pago"],
-                2
-
-            ),
-
-            "valor_unitario": round(
-
-                produtos_estoque[produto]["custo"],2
-
-            )
-        }
+        quantidade_comprada = (produtos_estoque[produto]["quantidade"])
+        vendido = produtos_vendidos.get(produto,0)
+        restante = (quantidade_comprada-vendido)
+        estoque_atual[produto] = {"restante": restante,"valor_pago": 
+            round(produtos_estoque[produto]["valor_pago"],2),
+            "valor_unitario": 
+                round(produtos_estoque[produto]["custo"],2)}
+    lucro = (receita-custo_total_vendido)
     print("Receita:", receita)
-    print("Custo total vendido:", custo_total_vendido)
-
-    lucro = receita - custo_total_vendido
-
+    print("Custo total vendido:",
+          custo_total_vendido)
     print("Lucro:", lucro)
-
-    
     return render_template(
-
         "dashboard.html",
-
-        receita=round(receita,2),
-        custo=round(custo_estoque,2),
-        lucro=round(lucro,2),
-
+        receita=round(receita, 2),
+        custo=round(custo_total_vendido,2),
+        lucro=round(lucro, 2),
+        investimento=round(custo_estoque,2),        
         estoque=estoque_atual
+        )
 
-    )
+
 @app.route("/consulta")
 def consulta():
 
@@ -495,6 +488,40 @@ def gravar_estoque():
 
     return redirect(url_for("estoque"))
 
+@app.route(
+    "/gravar_composicao",
+    methods=["POST"]
+)
+def gravar_composicao():
+
+    produto = (
+        request.form["produto"]
+        .strip()
+        .lower()
+    )
+
+    material = (
+        request.form["material"]
+        .strip()
+        .lower()
+    )  
+
+
+    quantidade = (
+        request.form["quantidade"]
+    )
+
+    aba_composicao.append_row([
+
+        produto,
+        material,
+        quantidade
+
+    ])
+
+    return redirect(
+        url_for("composicao")
+    )
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", debug=True)

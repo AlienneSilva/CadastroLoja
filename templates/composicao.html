@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <title>
+        Composição
+    </title>
+
+    <link rel="stylesheet" href="{{ url_for('static',
+filename='css/main.css') }}">
+
+</head>
+
+<body>
+
+    <h1>
+
+        Cadastrar Composição
+
+    </h1>
+
+
+    <form action="/gravar_composicao" method="POST">
+
+        <input type="text" name="produto" placeholder="Produto Final" required>
+        <select name="material">
+
+            <option value="mdf">
+                MDF
+            </option>
+
+            <option value="argola">
+                Argola
+            </option>
+
+            <option value="papel adesivo">
+                Papel Adesivo
+            </option>
+
+        </select>
+
+
+        <input type="number" step="0.01" name="quantidade" placeholder="Quantidade usada" required>
+
+        <button type="submit">
+
+            Salvar
+
+        </button>
+
+    </form>
+
+
+    <div class="botoes">
+
+        <a href="{{ url_for('inicio') }}">
+
+            <button>
+
+                Voltar
+
+            </button>
+
+        </a>
+
+    </div>
+
+</body>
+
+</html>
