@@ -59,9 +59,6 @@ cliente = gspread.authorize(credenciais)
 # PLANILHA VENDAS
 # =====================
 
-# =====================
-# PLANILHA VENDAS
-# =====================
 
 try:
 
@@ -146,6 +143,27 @@ cabecalhoEstoque = [
 if aba_estoque.row_values(1) != cabecalhoEstoque:
     aba_estoque.insert_row(cabecalhoEstoque, 1)
 
+# =====================
+# PLANILHA DESPESAS
+# =====================
+
+try:
+
+    planilha_despesas = cliente.open(
+        "Despesas"
+    )
+
+    aba_despesas = (
+        planilha_despesas.sheet1
+    )
+
+except Exception as erro:
+
+    print(
+        "Erro ao abrir planilha Despesas:"
+    )
+
+    print(erro)
 
 # =====================
 # ROTAS
@@ -177,6 +195,23 @@ def dashboard():
     vendas = aba_vendas.get_all_records()
     estoque = aba_estoque.get_all_records()
     composicoes = aba_composicao.get_all_records()
+    despesas = aba_despesas.get_all_records()
+
+    total_despesas = 0
+
+    for despesa in despesas:
+
+        try:
+
+            valor = converter_valor(
+                despesa["Valor"]
+            )
+
+            total_despesas += valor
+
+        except:
+
+            continue
     
     
     receita = 0
@@ -257,9 +292,11 @@ def dashboard():
     print("Receita:", receita)
     print("Custo total vendido:", custo_total_vendido)
 
-    lucro = receita - custo_total_vendido
-
-    print("Lucro:", lucro)
+    lucro_bruto = (receita - custo_total_vendido)
+    lucro_liquido = (lucro_bruto - total_despesas)
+    print("Despesas:", total_despesas)
+    print("Lucro Bruto:", lucro_bruto)
+    print("Lucro Líquido:", lucro_liquido)
 
     estoque_atual = {}
 
@@ -295,14 +332,20 @@ def dashboard():
             )
         }
 
+
     return render_template(
+
         "dashboard.html",
+
         receita=round(receita,2),
         custo=round(custo_total_vendido,2),
-        lucro=round(lucro,2),
+        lucro_bruto=round(lucro_bruto,2),
+        lucro_liquido=round(lucro_liquido,2),
+        despesas=round(total_despesas,2),
         estoque=estoque_atual,
-        custo_estoque=round(custo_estoque,2),
-        investimento=round(custo_estoque,2))
+        custo_estoque=round(custo_estoque,2)
+        )
+
 
 @app.route("/consulta")
 def consulta():
@@ -404,6 +447,15 @@ def excluir_estoque(linha):
             "consulta",
             tipo="estoque"
         )
+    )
+@app.route("/despesas")
+def despesas():
+
+    data_hoje = datetime.now().strftime("%Y-%m-%d")
+
+    return render_template(
+        "despesas.html",
+        data_hoje=data_hoje
     )
 # =====================
 # FUNÇÕES
@@ -528,6 +580,37 @@ def gravar_composicao():
     return redirect(
         url_for("composicao")
     )
+@app.route(
+    "/gravar_despesa",
+    methods=["POST"]
+)
+def gravar_despesa():
 
+    data = request.form["data"]
+
+    categoria = request.form[
+        "categoria"
+    ]
+
+    descricao = request.form[
+        "descricao"
+    ]
+
+    valor = request.form[
+        "valor"
+    ].replace(",", ".")
+
+    aba_despesas.append_row([
+
+        data,
+        categoria,
+        descricao,
+        valor
+
+    ])
+
+    return redirect(
+        url_for("despesas")
+    )
 if __name__ == "__main__":
     app.run(host="0.0.0.0", debug=True)

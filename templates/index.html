@@ -34,24 +34,29 @@
             </div>
             <div class="form_grupo">
                 <label>Valor Unitário</label>
-                  <input type="number" name="valorUni" step="0.01" min="0" class="form_input" placeholder="Valor da Unidade, Ex.: 10,50"  pattern="^\d+([,]\d{1,2})?$"required>
-            
+                <input type="number" name="valorUni" step="0.01" min="0" class="form_input"
+                    placeholder="Valor da Unidade, Ex.: 10,50" pattern="^\d+([,]\d{1,2})?$" required>
+
             </div>
 
             <div class="form_grupo">
                 <label>Produto</label>
                 <select name="produto" class="form_input">
-                    <option value="Selecione">Selecione</option>
+                    <option value="" selected disabled>
+                        Selecione um produto
+                    </option>
                     <option value="Copo inox">Copo Inox</option>
                     <option value="Caneca">Caneca Cerâmica</option>
-                    <option value="Chaveiro">Chaveiro</option>                    
+                    <option value="Chaveiro">Chaveiro</option>
                 </select>
             </div>
 
             <div class="form_grupo">
                 <label>Canal</label>
                 <select name="canal" class="form_input">
-                    <option value="Selecione">Selecione</option>
+                    <option value="" selected disabled>
+                        Selecione um produto
+                    </option>
                     <option value="instagran">Instagram</option>
                     <option value="facebook">Facebook</option>
                     <option value="vendas pessoais">Vendas Pessoais</option>
@@ -64,7 +69,10 @@
             <div class="form_grupo">
                 <label>Conta</label>
                 <select name="conta" class="form_input">
-                    <option value="Selecione">Selecione</option>
+                    <option value="" selected disabled>
+                        Selecione um produto
+                    </option>
+                    <option value="WhastsApp">whatsApp</option>
                     <option value="Ra Mercado Livre">Ra produtos mercado livre</option>
                     <option value="Ra produtos shoppe">Ra produtos shoppe</option>
                     <option value="Unistory shoppe">Unistory shoppe</option>
@@ -74,17 +82,17 @@
 
             </div>
 
-<div class="botoes">
-            <input type="hidden" name="acao" value="enviar">
+            <div class="botoes">
+                <input type="hidden" name="acao" value="enviar">
 
-            <button type="submit" class="submit_btn">
-                Cadastrar
-            </button>
-            </br>
-            <a href="{{ url_for('inicio') }}">
-                <button type="button">Voltar</button>
-            </a>
-</div>
+                <button type="submit" class="submit_btn">
+                    Cadastrar
+                </button>
+                </br>
+                <a href="{{ url_for('inicio') }}">
+                    <button type="button">Voltar</button>
+                </a>
+            </div>
         </form>
 
     </div>

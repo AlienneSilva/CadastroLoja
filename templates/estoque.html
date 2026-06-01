@@ -19,9 +19,7 @@
             Formulário de Cadastro de estoque
         </h1>
 
-        <form
-        action="/gravar_estoque"
-        method="POST">
+        <form action="/gravar_estoque" method="POST">
 
             <div class="form_grupo">
 
@@ -29,16 +27,7 @@
                     Nome do Responsável
                 </label>
 
-                <input
-                type="text"
-
-                name="responsa"
-
-                class="form_input"
-
-                placeholder="Nome do Responsável"
-
-                required>
+                <input type="text" name="responsa" class="form_input" placeholder="Nome do Responsável" required>
 
             </div>
 
@@ -49,18 +38,8 @@
                     Número de peças
                 </label>
 
-                <input
-                type="number"
-
-                name="qtd"
-
-                min="1"
-
-                class="form_input"
-
-                placeholder="Número de peças compradas"
-
-                required>
+                <input type="number" name="qtd" min="1" class="form_input" placeholder="Número de peças compradas"
+                    required>
 
             </div>
 
@@ -71,15 +50,10 @@
                     Produto / Material
                 </label>
 
-                <select
-                name="itens"
+                <select name="itens" class="form_input" required>
 
-                class="form_input"
-
-                required>
-
-                    <option value="">
-                        Selecione
+                    <option value="" selected disabled>
+                        Selecione um produto
                     </option>
 
                     <!-- MATÉRIA PRIMA -->
@@ -130,37 +104,17 @@
                     Valor Pago
                 </label>
 
-                <input
-                type="number"
-
-                step="0.01"
-
-                min="0"
-
-                name="valorPago"
-
-                class="form_input"
-
-                placeholder="Valor Pago"
-
-                required>
+                <input type="number" step="0.01" min="0" name="valorPago" class="form_input" placeholder="Valor Pago"
+                    required>
 
             </div>
 
 
             <div class="botoes">
 
-                <input
-                type="hidden"
+                <input type="hidden" name="acao" value="enviar">
 
-                name="acao"
-
-                value="enviar">
-
-                <button
-                type="submit"
-
-                class="submit_btn">
+                <button type="submit" class="submit_btn">
 
                     Cadastrar
 

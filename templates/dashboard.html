@@ -30,11 +30,23 @@
                 R$ {{ "%.2f"|format(custo)|replace(".", ",") }}
             </p>
         </div>
+        <div class="card">
+            <h2>Despesas</h2>
+            <p>
+                R$ {{ "%.2f"|format(despesas)|replace(".", ",") }}
+            </p>
+        </div>
 
         <div class="card">
-            <h2>Lucro</h2>
+            <h2>Lucro Bruto S/ despesas</h2>
             <p>
-                R$ {{ "%.2f"|format(lucro)|replace(".", ",") }}
+                R$ {{ "%.2f"|format(lucro_bruto)|replace(".", ",") }}
+            </p>
+        </div>
+        <div class="card">
+            <h2>Lucro Líquido</h2>
+            <p>
+                R$ {{ "%.2f"|format(lucro_liquido)|replace(".", ",") }}
             </p>
         </div>
 
@@ -63,13 +75,16 @@
         </tr>
         {% endfor %}
     </table>
+</br>
+
     <h3 class="investimento">
 
         Valor Investido em Estoque:
 
-        R$ {{ "%.2f"|format(investimento)|replace(".", ",") }}
+        R$ {{ "%.2f"|format(custo_estoque)|replace(".", ",") }}
 
     </h3>
+   
 
 
 
