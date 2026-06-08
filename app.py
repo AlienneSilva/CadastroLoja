@@ -1,9 +1,11 @@
-from flask import Flask, request, render_template, redirect, url_for
-from datetime import datetime
-from google.oauth2.service_account import Credentials
-import gspread
-import os
 import json
+import os
+from datetime import datetime
+
+import gspread
+from flask import Flask, redirect, render_template, request, url_for
+from google.oauth2.service_account import Credentials
+
 
 def converter_valor(valor):
 
@@ -12,13 +14,10 @@ def converter_valor(valor):
     if valor == "":
         return 0
 
-    valor = (
-        valor.replace("R$", "")
-              .replace(",", ".")
-              .strip()
-    )
+    valor = valor.replace("R$", "").replace(",", ".").strip()
 
     return float(valor)
+
 
 app = Flask(__name__)
 
@@ -29,29 +28,25 @@ app = Flask(__name__)
 
 escopos = [
     "https://www.googleapis.com/auth/spreadsheets",
-    "https://www.googleapis.com/auth/drive"
+    "https://www.googleapis.com/auth/drive",
 ]
 
 
 # Render
 if "GOOGLE_CREDENTIALS" in os.environ:
 
-    credenciais_json = json.loads(
-        os.environ["GOOGLE_CREDENTIALS"]
-    )
+    credenciais_json = json.loads(os.environ["GOOGLE_CREDENTIALS"])
 
     credenciais = Credentials.from_service_account_info(
-        credenciais_json,
-        scopes=escopos
+        credenciais_json, scopes=escopos
     )
 
 # Local
 else:
 
-  credenciais = Credentials.from_service_account_file(
-    "cadastro-497420-0dfc8c86c2dc.json",
-    scopes=escopos
-)
+    credenciais = Credentials.from_service_account_file(
+        "cadastro-497420-0dfc8c86c2dc.json", scopes=escopos
+    )
 cliente = gspread.authorize(credenciais)
 
 
@@ -62,19 +57,13 @@ cliente = gspread.authorize(credenciais)
 
 try:
 
-    planilha_vendas = cliente.open(
-        "Cadastros"
-    )
+    planilha_vendas = cliente.open("Cadastros")
 
-    aba_vendas = (
-        planilha_vendas.sheet1
-    )
+    aba_vendas = planilha_vendas.sheet1
 
 except Exception as erro:
 
-    print(
-        "Erro ao abrir planilha Cadastros:"
-    )
+    print("Erro ao abrir planilha Cadastros:")
 
     print(erro)
 
@@ -85,19 +74,13 @@ except Exception as erro:
 
 try:
 
-    planilha_composicao = cliente.open(
-        "COMPOSICAO"
-    )
+    planilha_composicao = cliente.open("COMPOSICAO")
 
-    aba_composicao = (
-        planilha_composicao.sheet1
-    )
+    aba_composicao = planilha_composicao.sheet1
 
 except Exception as erro:
 
-    print(
-        "Erro ao abrir composição:"
-    )
+    print("Erro ao abrir composição:")
 
     print(erro)
 
@@ -111,19 +94,19 @@ cabecalho_vendas = [
     "Canal",
     "Conta",
     "Valor Total",
-    "Data Registro"
+    "Data Registro",
 ]
 
 if aba_vendas.row_values(1) != cabecalho_vendas:
-   aba_vendas.insert_row(cabecalho_vendas, 1)
+    aba_vendas.insert_row(cabecalho_vendas, 1)
 
 # ======================
- #PLANILHA ESTOQUE
+# PLANILHA ESTOQUE
 # =====================
 
 try:
-   planilha_estoque = cliente.open("Estoque")
-   aba_estoque = planilha_estoque.sheet1
+    planilha_estoque = cliente.open("Estoque")
+    aba_estoque = planilha_estoque.sheet1
 
 except Exception as erro:
     print("Erro ao abrir planilha Estoque:")
@@ -131,13 +114,12 @@ except Exception as erro:
 
 
 cabecalhoEstoque = [
-
     "Responsável",
     "Quantidade",
     "Itens",
     "Valor Pago",
     "Valor Unitário",
-    "Data Registro"
+    "Data Registro",
 ]
 
 if aba_estoque.row_values(1) != cabecalhoEstoque:
@@ -149,25 +131,20 @@ if aba_estoque.row_values(1) != cabecalhoEstoque:
 
 try:
 
-    planilha_despesas = cliente.open(
-        "Despesas"
-    )
+    planilha_despesas = cliente.open("Despesas")
 
-    aba_despesas = (
-        planilha_despesas.sheet1
-    )
+    aba_despesas = planilha_despesas.sheet1
 
 except Exception as erro:
 
-    print(
-        "Erro ao abrir planilha Despesas:"
-    )
+    print("Erro ao abrir planilha Despesas:")
 
     print(erro)
 
 # =====================
 # ROTAS
 # =====================
+
 
 @app.route("/")
 def inicio():
@@ -183,12 +160,12 @@ def cadastro():
 def estoque():
     return render_template("estoque.html")
 
+
 @app.route("/composicao")
 def composicao():
 
-    return render_template(
-        "composicao.html"
-    )
+    return render_template("composicao.html")
+
 
 @app.route("/dashboard")
 def dashboard():
@@ -203,31 +180,27 @@ def dashboard():
 
         try:
 
-            valor = converter_valor(
-                despesa["Valor"]
-            )
+            valor = converter_valor(despesa["Valor"])
 
             total_despesas += valor
 
         except:
 
             continue
-    
-    
+
     receita = 0
     custo_total_vendido = 0
     custo_estoque = 0
     produtos_estoque = {}
-    produtos_vendidos = {}
     materiais_consumidos = {}
 
-# =====================
-# ESTOQUE
-# =====================
+    # =====================
+    # ESTOQUE
+    # =====================
 
     for item in estoque:
         try:
-            produto = (item["Itens"].strip().lower())
+            produto = item["Itens"].strip().lower()
             quantidade = int(item["Quantidade"])
             valor_pago = converter_valor(item["Valor Pago"])
             valor_unitario = converter_valor(item["Valor Unitário"])
@@ -235,54 +208,57 @@ def dashboard():
             if produto in produtos_estoque:
                 produtos_estoque[produto]["quantidade"] += quantidade
                 produtos_estoque[produto]["valor_pago"] += valor_pago
-                produtos_estoque[produto]["custo"] = (produtos_estoque[produto]["valor_pago"]
-                                                      /
-                                                      produtos_estoque[produto]["quantidade"]
-                                                      )
+                produtos_estoque[produto]["custo"] = (
+                    produtos_estoque[produto]["valor_pago"]
+                    / produtos_estoque[produto]["quantidade"]
+                )
             else:
-                produtos_estoque[produto] = {"quantidade": quantidade,"valor_pago": valor_pago,"custo": valor_unitario}
+                produtos_estoque[produto] = {
+                    "quantidade": quantidade,
+                    "valor_pago": valor_pago,
+                    "custo": valor_unitario,
+                }
         except Exception as erro:
             print("ERRO ESTOQUE:")
             print(erro)
             print(item)
         continue
 
+    # =====================
+    # VENDAS
+    # =====================
 
-# =====================
-# VENDAS
-# =====================
-
-    
-
-# Lê vendas
+    # Lê vendas
     for venda in vendas:
 
         try:
 
-            produto = (venda["Produto"].strip().lower())
+            produto = venda["Produto"].strip().lower()
             qtd_vendida = int(venda["Peças"])
             valor_total = converter_valor(venda["Valor Total"])
             receita += valor_total
             tem_composicao = False
 
-        # PROCURA COMPOSIÇÃO
+            # PROCURA COMPOSIÇÃO
             for comp in composicoes:
 
-                produto_comp = (comp["Produto"].strip().lower())
+                produto_comp = comp["Produto"].strip().lower()
                 if produto == produto_comp:
                     tem_composicao = True
-                    material = (comp["Material"].strip().lower())
+                    material = comp["Material"].strip().lower()
                     qtd_material = float(comp["Quantidade Usada"])
                     if material in produtos_estoque:
-                        consumo = (qtd_vendida * qtd_material)
-                        materiais_consumidos[material] = (materiais_consumidos.get(material,0) + consumo)
-                        custo_material = (produtos_estoque[material]["custo"])
-                        custo_total_vendido += (consumo * custo_material)
-        # PRODUTO SEM COMPOSIÇÃO
+                        consumo = qtd_vendida * qtd_material
+                        materiais_consumidos[material] = (
+                            materiais_consumidos.get(material, 0) + consumo
+                        )
+                        custo_material = produtos_estoque[material]["custo"]
+                        custo_total_vendido += consumo * custo_material
+            # PRODUTO SEM COMPOSIÇÃO
             if not tem_composicao:
                 if produto in produtos_estoque:
-                    custo_unitario = (produtos_estoque[produto]["custo"])
-                    custo_total_vendido += (qtd_vendida * custo_unitario)
+                    custo_unitario = produtos_estoque[produto]["custo"]
+                    custo_total_vendido += qtd_vendida * custo_unitario
 
         except Exception as erro:
             print("ERRO VENDAS:")
@@ -292,8 +268,8 @@ def dashboard():
     print("Receita:", receita)
     print("Custo total vendido:", custo_total_vendido)
 
-    lucro_bruto = (receita - custo_total_vendido)
-    lucro_liquido = (lucro_bruto - total_despesas)
+    lucro_bruto = receita - custo_total_vendido
+    lucro_liquido = lucro_bruto - total_despesas
     print("Despesas:", total_despesas)
     print("Lucro Bruto:", lucro_bruto)
     print("Lucro Líquido:", lucro_liquido)
@@ -302,59 +278,35 @@ def dashboard():
 
     for produto in produtos_estoque:
 
-        quantidade_comprada = (
-            produtos_estoque[produto]["quantidade"]
-        )
+        quantidade_comprada = produtos_estoque[produto]["quantidade"]
 
-        consumido = materiais_consumidos.get(
-            produto,
-            0
-        )
+        consumido = materiais_consumidos.get(produto, 0)
 
-        restante = (
-            quantidade_comprada
-            -
-            consumido
-        )
+        restante = quantidade_comprada - consumido
 
         estoque_atual[produto] = {
-
             "restante": restante,
-
-            "valor_pago": round(
-                produtos_estoque[produto]["valor_pago"],
-                2
-            ),
-
-            "valor_unitario": round(
-                produtos_estoque[produto]["custo"],
-                2
-            )
+            "valor_pago": round(produtos_estoque[produto]["valor_pago"], 2),
+            "valor_unitario": round(produtos_estoque[produto]["custo"], 2),
         }
 
-
     return render_template(
-
         "dashboard.html",
-
-        receita=round(receita,2),
-        custo=round(custo_total_vendido,2),
-        lucro_bruto=round(lucro_bruto,2),
-        lucro_liquido=round(lucro_liquido,2),
-        despesas=round(total_despesas,2),
+        receita=round(receita, 2),
+        custo=round(custo_total_vendido, 2),
+        lucro_bruto=round(lucro_bruto, 2),
+        lucro_liquido=round(lucro_liquido, 2),
+        despesas=round(total_despesas, 2),
         estoque=estoque_atual,
-        custo_estoque=round(custo_estoque,2)
-        )
+        custo_estoque=round(custo_estoque, 2),
+    )
 
 
 @app.route("/consulta")
 def consulta():
 
     # PESQUISA VENDAS
-    termo_venda = request.args.get(
-        "pesquisa_vendas",
-        ""
-    ).lower()
+    termo_venda = request.args.get("pesquisa_vendas", "").lower()
 
     registros_vendas = aba_vendas.get_all_values()
 
@@ -365,9 +317,7 @@ def consulta():
 
     for i, linha in enumerate(dados_v, start=2):
 
-        venda = dict(
-            zip(cabecalho_v, linha)
-        )
+        venda = dict(zip(cabecalho_v, linha))
 
         venda["linha"] = i
 
@@ -376,21 +326,14 @@ def consulta():
     if termo_venda:
 
         vendas = [
-
-            venda for venda in vendas
-
+            venda
+            for venda in vendas
             if termo_venda in venda["Nome"].lower()
-
             or termo_venda in venda["Produto"].lower()
-
         ]
 
-
     # PESQUISA ESTOQUE
-    termo_estoque = request.args.get(
-        "pesquisa_estoque",
-        ""
-    ).lower()
+    termo_estoque = request.args.get("pesquisa_estoque", "").lower()
 
     registros_estoque = aba_estoque.get_all_values()
 
@@ -401,9 +344,7 @@ def consulta():
 
     for i, linha in enumerate(dados_e, start=2):
 
-        item = dict(
-            zip(cabecalho_e, linha)
-        )
+        item = dict(zip(cabecalho_e, linha))
 
         item["linha"] = i
 
@@ -412,54 +353,43 @@ def consulta():
     if termo_estoque:
 
         estoque = [
-
-            item for item in estoque
-
+            item
+            for item in estoque
             if termo_estoque in item["Itens"].lower()
-
             or termo_estoque in item["Responsável"].lower()
-
         ]
 
+    return render_template("consulta.html", vendas=vendas, estoque=estoque)
 
-    return render_template(
 
-        "consulta.html",
-
-        vendas=vendas,
-
-        estoque=estoque
-
-    )
 @app.route("/excluir/<int:linha>")
 def excluir(linha):
 
     aba_vendas.delete_rows(linha)
 
     return redirect(url_for("consulta"))
+
+
 @app.route("/excluir_estoque/<int:linha>")
 def excluir_estoque(linha):
 
     aba_estoque.delete_rows(linha)
 
-    return redirect(
-        url_for(
-            "consulta",
-            tipo="estoque"
-        )
-    )
+    return redirect(url_for("consulta", tipo="estoque"))
+
+
 @app.route("/despesas")
 def despesas():
 
     data_hoje = datetime.now().strftime("%Y-%m-%d")
 
-    return render_template(
-        "despesas.html",
-        data_hoje=data_hoje
-    )
+    return render_template("despesas.html", data_hoje=data_hoje)
+
+
 # =====================
 # FUNÇÕES
 # =====================
+
 
 def calc(valorUni, pecas):
     return float(valorUni) * int(pecas)
@@ -468,6 +398,7 @@ def calc(valorUni, pecas):
 # =====================
 # SALVAR VENDAS
 # =====================
+
 
 @app.route("/gravar_venda", methods=["POST"])
 def gravar_venda():
@@ -484,17 +415,19 @@ def gravar_venda():
 
     data_registro = datetime.now().strftime("%d/%m/%Y %H:%M")
 
-    aba_vendas.append_row([
-        nome,
-        contato,
-        pecas,
-        produto,
-        valorUni,
-        canal,
-        conta,
-        valorTotal,
-        data_registro
-    ])
+    aba_vendas.append_row(
+        [
+            nome,
+            contato,
+            pecas,
+            produto,
+            valorUni,
+            canal,
+            conta,
+            valorTotal,
+            data_registro,
+        ]
+    )
 
     return redirect(url_for("cadastro"))
 
@@ -502,6 +435,7 @@ def gravar_venda():
 # =====================
 # SALVAR ESTOQUE
 # =====================
+
 
 @app.route("/gravar_estoque", methods=["POST"])
 def gravar_estoque():
@@ -525,92 +459,49 @@ def gravar_estoque():
     print("Valor recebido:", valorPago)
 
     aba_estoque.append_row(
-
         [
-
             responsa,
             qtd,
             itens,
-
             f"{valor_pago_float:.2f}",
-
             f"{valor_unitario:.2f}",
-
-            data_registro
-
+            data_registro,
         ],
-
-        value_input_option="RAW"
-
+        value_input_option="RAW",
     )
 
     return redirect(url_for("estoque"))
 
-@app.route(
-    "/gravar_composicao",
-    methods=["POST"]
-)
+
+@app.route("/gravar_composicao", methods=["POST"])
 def gravar_composicao():
 
-    produto = (
-        request.form["produto"]
-        .strip()
-        .lower()
-    )
+    produto = request.form["produto"].strip().lower()
 
-    material = (
-        request.form["material"]
-        .strip()
-        .lower()
-    )  
+    material = request.form["material"].strip().lower()
+
+    quantidade = request.form["quantidade"]
+
+    aba_composicao.append_row([produto, material, quantidade])
+
+    return redirect(url_for("composicao"))
 
 
-    quantidade = (
-        request.form["quantidade"]
-    )
-
-    aba_composicao.append_row([
-
-        produto,
-        material,
-        quantidade
-
-    ])
-
-    return redirect(
-        url_for("composicao")
-    )
-@app.route(
-    "/gravar_despesa",
-    methods=["POST"]
-)
+@app.route("/gravar_despesa", methods=["POST"])
 def gravar_despesa():
 
     data = request.form["data"]
 
-    categoria = request.form[
-        "categoria"
-    ]
+    categoria = request.form["categoria"]
 
-    descricao = request.form[
-        "descricao"
-    ]
+    descricao = request.form["descricao"]
 
-    valor = request.form[
-        "valor"
-    ].replace(",", ".")
+    valor = request.form["valor"].replace(",", ".")
 
-    aba_despesas.append_row([
+    aba_despesas.append_row([data, categoria, descricao, valor])
 
-        data,
-        categoria,
-        descricao,
-        valor
+    return redirect(url_for("despesas"))
 
-    ])
 
-    return redirect(
-        url_for("despesas")
-    )
 if __name__ == "__main__":
     app.run(host="0.0.0.0", debug=True)
