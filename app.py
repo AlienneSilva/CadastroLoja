@@ -484,27 +484,53 @@ def excluir_estoque(linha):
 
     return redirect(url_for("consulta", tipo="estoque"))
 
+@app.route(
+    "/excluir_despesa/<int:linha>"
+)
+def excluir_despesa(linha):
+
+    aba_despesas.delete_rows(
+        linha
+    )
+
+    return redirect(
+        url_for("despesas")
+    )
+
 
 @app.route("/despesas")
 def despesas():
 
     data_hoje = datetime.now().strftime("%Y-%m-%d")
 
-    return render_template("despesas.html", data_hoje=data_hoje)
+    registros = aba_despesas.get_all_values()
 
+    cabecalho = registros[0]
+    dados = registros[1:]
 
-# =====================
-# FUNÇÕES
-# =====================
+    despesas_lista = []
 
+    for i, linha in enumerate(dados, start=2):
 
-def calc(valorUni, pecas):
-    return float(valorUni) * int(pecas)
+        despesa = dict(
+            zip(cabecalho, linha)
+        )
 
+        despesa["linha"] = i
 
-# =====================
-# SALVAR VENDAS
-# =====================
+        despesas_lista.append(
+            despesa
+        )
+
+    return render_template(
+
+        "despesas.html",
+
+        data_hoje=data_hoje,
+
+        despesas=despesas_lista
+
+    )
 
 
 @app.route("/gravar_venda", methods=["POST"])

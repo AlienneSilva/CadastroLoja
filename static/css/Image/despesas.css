@@ -1,0 +1,53 @@
+.form {
+    width: 90%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+table {
+
+    width: 100%;
+    max-width: 100%;
+    border-collapse: collapse;
+    table-layout: auto;
+
+}
+.tabela-despesas {
+    width: 90%;
+    max-width: 1400px;
+    margin: 40px auto;
+}
+
+.tabela-despesas table {
+    width: 100%;
+}
+
+th,
+td {
+
+    padding: 14px;
+    text-align: center;
+    word-break: break-word;
+
+}
+
+@media(max-width:768px) {
+
+    table {
+
+        font-size: 14px;
+
+    }
+
+    button {
+
+        width: 120%;
+        max-width: 200px;
+
+    }
+
+    form{
+
+        flex-wrap:wrap;
+    }
+
+}
