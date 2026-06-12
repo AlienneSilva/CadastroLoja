@@ -544,7 +544,10 @@ def gravar_venda():
     canal = request.form["canal"]
     conta = request.form["conta"]
 
-    valorTotal = calc(valorUni, pecas)
+    valorTotal = round(
+        float(valorUni) * int(pecas),
+        2
+    )
 
     data_registro = datetime.now().strftime("%d/%m/%Y %H:%M")
 
